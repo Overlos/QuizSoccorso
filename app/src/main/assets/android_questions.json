@@ -1,0 +1,290 @@
+[
+  {
+    "id": 1,
+    "question": "Qual è il Numero Unico di Emergenza (NUE)?",
+    "category": "Normativa",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "112",
+      "113",
+      "115",
+      "118"
+    ],
+    "correct": "112",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 3,
+    "question": "Qual è il rapporto compressioni : insufflazioni nell'RCP (rianimazione cardio-polmonare) adulto?",
+    "category": "BLS-D",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "30:1",
+      "30:2",
+      "15:2",
+      "15:1"
+    ],
+    "correct": "30:2",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 4,
+    "question": "Quando un paziente è iperpiretico?",
+    "category": "ABCDE",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Temp. < 35°C",
+      "Temp. > 35°C",
+      "Temp. > 37°C",
+      "Temp. > 40°C"
+    ],
+    "correct": "Temp. > 40°C",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 5,
+    "question": "TEST 1 AUTISTI",
+    "category": "Normativa",
+    "tags": [
+      "Autisti"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "correct": "A",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 6,
+    "question": "TEST 2 AUTISTI",
+    "category": "Aggiornamento 2025",
+    "tags": [
+      "Autisti"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "correct": "A",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 7,
+    "question": "Quando un paziente presenta ipertermia?",
+    "category": "ABCDE",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Temp. > 37°C e < 40°C",
+      "Temp. > 36°C e < 39°C",
+      "Temp. > 40°C",
+      "Temp. > 37°C"
+    ],
+    "correct": "Temp. > 37°C e < 40°C",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 8,
+    "question": "Quel è il colore della pettorina del \"direttore dei trasporti\"?",
+    "category": "Maxi-emergenza",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Blu",
+      "Rosso",
+      "Giallo",
+      "Giallo-Rosso"
+    ],
+    "correct": "Blu",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 9,
+    "question": "Un paziente presenta deformità al polso:",
+    "category": "Trauma",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 2,
+    "answers": [
+      "Chiarita la dinamica del trauma, procedo a posizionare la steccobenda senza ABCDE",
+      "Posiziono la steccobenda alla D dell'ABCDE",
+      "Immobilizzo il polso alla D dell'ABCDE con una fasciatura",
+      "Applico solamente del ghiaccio alla D dell'ABCDE"
+    ],
+    "correct": "Posiziono la steccobenda alla D dell'ABCDE",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 10,
+    "question": "La V dell' AVPU sta per:",
+    "category": "ABCDE",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Verbal: il paziente mi risponde se gli parlo",
+      "Verbal: il paziente mostra segni di coscienza allo stimolo sonoro",
+      "Vivid: il paziende ricorda gli eventi accaduti",
+      "Vigile: il paziente è orientato spazio-tempo"
+    ],
+    "correct": "Verbal: il paziente mostra segni di coscienza allo stimolo sonoro",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 11,
+    "question": "In presenza di una ferita toracica aperta soffiante bisogna:",
+    "category": "Trauma",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 3,
+    "answers": [
+      "Applicare una medicazione aperta su tre lati",
+      "Applicare una medicazione occlusiva",
+      "Lasciare la ferita aperta",
+      "Usare l'aspiratore portatile con sondino sterile"
+    ],
+    "correct": "Applicare una medicazione aperta su tre lati",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 12,
+    "question": "Qual è la causa più frequente di shock in un paziente traumatico?",
+    "category": "Trauma",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 2,
+    "answers": [
+      "Un trauma cranico",
+      "Un'emorragia",
+      "Una lesione spinale",
+      "Il PTSD (Disturbo da stress post traumatico)"
+    ],
+    "correct": "Un'emorragia",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 13,
+    "question": "Un corpo estraneo penetrante deve essere:",
+    "category": "Trauma",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Estratto immediatamente",
+      "Fissato in modo che non possa muoversi",
+      "Estratto con cautela, preparando la medicazione",
+      "Ignorato in attesa di supporto avanzato ospedaliero"
+    ],
+    "correct": "Fissato in modo che non possa muoversi",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 14,
+    "question": "Le CTE (compressioni toraciche esterne) vanno effettuate con il paziente posto in posizione:",
+    "category": "BLS-D",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 1,
+    "answers": [
+      "Laterale di sicurezza",
+      "Supina",
+      "Inalterata, se sospetto un trauma",
+      "Inalterata, purché le CTE siano efficaci"
+    ],
+    "correct": "Supina",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 15,
+    "question": "Perché è necessario sospendere le CTE (compressioni toraciche esterne) durante l'analisi del DAE?",
+    "category": "BLS-D",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 2,
+    "answers": [
+      "Per evitare artefatti durante l'analisi",
+      "Per verificare segni di ROSC",
+      "Per non ricevere una scarica accidentale",
+      "Per favorire l'afflusso di O2 nel pallone ambu"
+    ],
+    "correct": "Per evitare artefatti durante l'analisi",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 16,
+    "question": "Quant'è la durata dell'abilitazione all'uso del Defibrillatore Semiautomatico (DAE)?",
+    "category": "Normativa",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 2,
+    "answers": [
+      "Non superiore a 24 mesi",
+      "5 anni",
+      "Illimitata",
+      "12 mesi"
+    ],
+    "correct": "Non superiore a 24 mesi",
+    "explanation": "",
+    "source": ""
+  },
+  {
+    "id": 17,
+    "question": "Durante una missione, un astante vi chiede che cosa sia successo al paziente:",
+    "category": "Normativa",
+    "tags": [
+      "SSE"
+    ],
+    "difficulty": 2,
+    "answers": [
+      "Non fornite nessuna informazione e chiedete di rispettare la privacy del paziente",
+      "Fornite solo informazioni generali, senza dettagli approfonditi",
+      "Non fornite informazioni senza autorizzazione dei parenti",
+      "Spiegate la dinamica dell'intervento ed eventuali situazioni critiche"
+    ],
+    "correct": "Non fornite nessuna informazione e chiedete di rispettare la privacy del paziente",
+    "explanation": "",
+    "source": ""
+  }
+]
