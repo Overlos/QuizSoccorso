@@ -7,7 +7,8 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +28,11 @@ fun SettingsScreen(
     onFontSizeChanged: (Float) -> Unit,
     onHapticChanged: (Boolean) -> Unit,
     onExportDatabase: () -> Unit,
+    onImportDatabase: () -> Unit,
+    onExportGitHub: () -> Unit,
+    onShareModifications: () -> Unit,
+    onOpenPrivacy: () -> Unit,
+    onViewCode: () -> Unit,
     onShowDisclaimer: () -> Unit,
     onShowGuide: () -> Unit,
     onBack: () -> Unit
@@ -200,32 +206,87 @@ fun SettingsScreen(
                     onClick = onShowDisclaimer,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("⚖ Note Legali (Disclaimer)")
+                    Text("⚖ Note Legali")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = onOpenPrivacy,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Privacy Policy")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedButton(
+                    onClick = onViewCode,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Build, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Codice Sorgente (GitHub)")
                 }
             }
 
             HorizontalDivider()
 
-            // DATI E DATABASE: Esportazione in formato JSON per backup o condivisione
+            // DATI E DATABASE: Gestione del database JSON
             Column {
                 Text(
                     text = "Dati e Database",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedButton(
-                    onClick = onExportDatabase,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.Share, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Esporta Database (JSON)")
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = onImportDatabase,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Importa JSON", style = MaterialTheme.typography.labelSmall)
+                    }
+                    OutlinedButton(
+                        onClick = onExportDatabase,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Esporta JSON", style = MaterialTheme.typography.labelSmall)
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = onExportGitHub,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Esporta GitHub", style = MaterialTheme.typography.labelSmall)
+                    }
+                    OutlinedButton(
+                        onClick = onShareModifications,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Email, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Esporta Email", style = MaterialTheme.typography.labelSmall)
+                    }
+                }
+
                 Text(
-                    text = "Condividi il tuo database di domande con altri dispositivi.",
+                    text = "L'esportazione GitHub o Email include solo le tue modifiche per la revisione.",
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
         }

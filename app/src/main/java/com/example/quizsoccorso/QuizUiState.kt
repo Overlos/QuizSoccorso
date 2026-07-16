@@ -1,52 +1,60 @@
 package com.example.quizsoccorso
 
 /**
- * Rappresenta lo stato della UI durante una sessione di Quiz.
- * Utilizzato per rendere la UI reattiva ai cambiamenti nel ViewModel.
+ * QuizUiState rappresenta lo stato immutabile della UI per la schermata del Quiz.
+ * In Jetpack Compose, questo oggetto viene "osservato": ogni volta che un campo cambia,
+ * la UI si aggiorna automaticamente per riflettere il nuovo stato.
+ *
+ * Studia questi campi per capire come viene gestito il flusso del quiz:
  */
 data class QuizUiState(
-    // La domanda attualmente visualizzata
+    // La domanda che l'utente sta visualizzando in questo momento
     val currentQuestion: QuizQuestion? = null,
-    // Elenco delle risposte mescolate per la domanda corrente
+    
+    // Le risposte mescolate casualmente (per non avere sempre la corretta nella stessa posizione)
     val shuffledAnswers: List<String> = emptyList(),
-    // Indice della domanda corrente nella sessione
+    
+    // Posizione attuale (0, 1, 2...) e totale delle domande nella sessione
     val currentIndex: Int = 0,
-    // Numero totale di domande nella sessione
     val totalQuestions: Int = 0,
-    // Punteggio attuale (risposte corrette)
+    
+    // Il punteggio corrente (incrementato solo dopo la conferma in modalità Studio o alla fine in Esame)
     val score: Int = 0,
-    // Indica se l'utente ha già confermato la risposta per la domanda corrente
+    
+    // Stato del flusso di risposta:
+    // answered: l'utente ha confermato e visto se è corretta (solo Studio)
     val answered: Boolean = false,
-    // Il testo della risposta selezionata dall'utente (ma non ancora confermata)
+    // selectedAnswer: la risposta su cui l'utente ha cliccato ma non ha ancora confermato
     val selectedAnswer: String? = null,
-    // Il testo della risposta corretta (mostrato dopo la conferma in modalità Studio)
+    // correctAnswer: memorizza la risposta giusta per evidenziarla in verde dopo l'errore
     val correctAnswer: String? = null,
-    // Indica se mostrare il pulsante "Prossima domanda"
+    
+    // Controlli di navigazione della UI
     val showNextButton: Boolean = false,
-    // Indica se l'utente ha selezionato una risposta (per abilitare il tasto conferma)
     val answerSelected: Boolean = false,
-    // Indica se la sessione di quiz è terminata
     val quizFinished: Boolean = false,
-    // Modalità della sessione (STUDIO o ESAME)
+    
+    // Modalità attuale: STUDIO (apprendimento), ESAME (simulazione), SMART (ripetizione mirata)
     val mode: QuizMode = QuizMode.STUDIO,
-    // Mappa degli ID delle domande e delle risposte date dall'utente (per Esame)
+    
+    // Dati per la Modalità Esame:
+    // userAnswers: mappa ID_DOMANDA -> TESTO_RISPOSTA_DATA
     val userAnswers: Map<Int, String> = emptyMap(),
-    // Tempo rimanente in secondi (per Esame)
+    // Timer: secondi rimanenti prima della consegna automatica
     val remainingTimeSeconds: Int = 0,
-    // Indica se mostrare il dialog di conferma invio esame
-    val showSubmitDialog: Boolean = false,
-    // Conteggio domande non ancora risposte (per il dialog di conferma)
-    val unansweredCount: Int = 0,
-    // Elenco completo delle domande della sessione (per review finale)
-    val questions: List<QuizQuestion> = emptyList(),
-    // Indica se la domanda corrente è già stata affrontata in sessioni precedenti
-    val alreadyAnsweredBefore: Boolean = false,
-    // Esito (corretto/errato) per ogni domanda della sessione corrente
-    val sessionResults: Map<Int, Boolean> = emptyMap(),
-    // Tempo totale impiegato per completare la sessione
-    val timeTakenSeconds: Int = 0,
-    // Tempo totale a disposizione per l'esame (calcolato dinamicamente)
+    // Tempo totale calcolato all'inizio (es. 30 domande * 80s = 2400s)
     val totalExamTimeSeconds: Int = 0,
-    // Indica se il sistema sta caricando dati (es. import database)
-    val isLoading: Boolean = false
+    
+    // Dialog di conferma per la consegna dell'esame
+    val showSubmitDialog: Boolean = false,
+    val unansweredCount: Int = 0,
+    
+    // Dati per il riepilogo finale (ResultScreen e ReviewScreen)
+    val questions: List<QuizQuestion> = emptyList(),
+    val sessionResults: Map<Int, Boolean> = emptyMap(),
+    val timeTakenSeconds: Int = 0,
+    
+    // Flag ausiliari
+    val alreadyAnsweredBefore: Boolean = false, // Indica se la domanda è "nuova" per l'utente
+    val isLoading: Boolean = false // Mostra un caricamento durante l'importazione
 )

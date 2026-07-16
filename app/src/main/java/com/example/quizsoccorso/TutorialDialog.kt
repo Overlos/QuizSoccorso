@@ -58,6 +58,21 @@ fun TutorialDialog(onDismiss: () -> Unit) {
             Icons.Default.Settings
         ),
         TutorialStep(
+            "Segnalazione Errori",
+            "Hai trovato un refuso o un errore in una domanda? Clicca l'icona del bug durante il quiz per segnalarlo via GitHub o Email.",
+            Icons.Default.BugReport
+        ),
+        TutorialStep(
+            "Database Personalizzato",
+            "Puoi importare nuovi database o modificare quello esistente. Un'icona di avviso (⚠️) in home ti indicherà se stai usando dati non originali.",
+            Icons.Default.Warning
+        ),
+        TutorialStep(
+            "Area Admin",
+            "Sei un istruttore? Accedi all'Area Admin (in fondo alla Home) per aggiungere, modificare o eliminare domande direttamente dall'app.",
+            Icons.Default.Edit
+        ),
+        TutorialStep(
             "Approfondimento",
             "Per dettagli tecnici sulle logiche di valutazione e l'algoritmo SMART, consulta la 'Guida Logiche App' nelle Impostazioni.",
             Icons.Default.Info

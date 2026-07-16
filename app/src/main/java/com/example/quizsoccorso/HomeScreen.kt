@@ -1,23 +1,9 @@
 package com.example.quizsoccorso
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.MedicalServices
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,11 +19,12 @@ fun HomeScreen(
     selectedSection: QuizSection,
     onSectionSelected: (QuizSection) -> Unit,
     onModeSelected: (QuizMode) -> Unit,
-    onImportClick: () -> Unit = {},
     onStatsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onTutorialClick: () -> Unit = {},
     onAdminClick: () -> Unit = {},
+    isAltered: Boolean = false,
+    onAlteredClick: () -> Unit = {},
     isLoading: Boolean = false
 ) {
     Column(
@@ -51,8 +38,19 @@ fun HomeScreen(
         // Toolbar superiore con pulsanti per Tutorial e Impostazioni
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            if (isAltered) {
+                IconButton(onClick = onAlteredClick) {
+                    Icon(
+                        Icons.Default.Warning, 
+                        contentDescription = "Database Alterato",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
             IconButton(onClick = onTutorialClick) {
                 Icon(Icons.Default.HelpOutline, contentDescription = "Tutorial")
             }
@@ -215,17 +213,6 @@ fun HomeScreen(
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
         ) {
             Text("📊 Statistiche", fontWeight = FontWeight.Bold)
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onImportClick,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Text("📂 Importa database JSON", fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(24.dp))

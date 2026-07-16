@@ -15,13 +15,16 @@ import kotlin.time.Duration.Companion.milliseconds
 data class PreparationIndex(
     val score: Int,
     val level: String,
-    val details: String
+    val details: String,
 )
 
 /**
  * ViewModel che gestisce la logica di business per i quiz e gli esami.
- * Coordina lo stato della UI, il timer dell'esame e le statistiche di apprendimento.
- * È il cuore dell'applicazione e implementa gli algoritmi SMART e di calcolo della preparazione.
+ *
+ * SCOPO DIDATTICO:
+ * Il ViewModel è il "cervello" della UI. Mantiene lo stato (StateFlow) e 
+ * reagisce agli input dell'utente invocando il Repository.
+ * Implementa gli algoritmi SMART e il calcolo dell'indice di preparazione.
  */
 class QuizViewModel(
     private val repository: QuizRepository
@@ -32,40 +35,46 @@ class QuizViewModel(
         private const val SECONDS_PER_EXAM_QUESTION = 80 
     }
 
-    // Elenco completo delle domande caricate dal database JSON
+    // Database completo in memoria per accesso rapido
     private val _databaseQuestions = MutableStateFlow<List<QuizQuestion>>(emptyList())
     val databaseQuestionsFlow: StateFlow<List<QuizQuestion>> = _databaseQuestions.asStateFlow()
-
-    // Accesso rapido alle domande (versione non-reattiva)
     val databaseQuestions: List<QuizQuestion> get() = _databaseQuestions.value
 
-    // Domande selezionate per la sessione corrente (Quiz o Esame)
+    // Elenco domande della sessione attiva
     private var allQuestions: List<QuizQuestion> = emptyList()
+    
+    // Gestione del Timer Esame tramite Coroutine Job
     private var timerJob: Job? = null
 
-    // Mappa delle statistiche per ogni domanda (ID domanda -> Statistica)
+    // Mappa persistente delle statistiche (ID -> Statistica)
     private val _questionStats = MutableStateFlow<Map<Int, QuestionStat>>(emptyMap())
     val questionStats: StateFlow<Map<Int, QuestionStat>> = _questionStats.asStateFlow()
 
-    // Stato principale della UI del Quiz (domanda corrente, risposte, punteggio, ecc.)
+    // Stato principale della UI (Unica fonte di verità per la vista)
     private val _uiState = MutableStateFlow(QuizUiState())
     val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
+    private val _isDatabaseAltered = MutableStateFlow(value = false)
+    val isDatabaseAltered: StateFlow<Boolean> = _isDatabaseAltered.asStateFlow()
+
     init {
-        // Caricamento asincrono dei dati all'avvio dell'applicazione
+        // Caricamento asincrono iniziale
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val questions = repository.loadQuestions()
             _databaseQuestions.value = questions
             allQuestions = questions
             _questionStats.value = repository.loadStats()
+            checkDatabaseAltered()
             _uiState.update { it.copy(isLoading = false) }
         }
     }
 
-    /**
-     * Importa un database JSON esterno e aggiorna lo stato dell'app.
-     */
+    private suspend fun checkDatabaseAltered() {
+        val modified = repository.getModifiedQuestions()
+        _isDatabaseAltered.value = modified.isNotEmpty()
+    }
+
     fun importDatabase(uri: Uri) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -73,12 +82,13 @@ class QuizViewModel(
             val questions = repository.loadQuestions()
             _databaseQuestions.value = questions
             allQuestions = questions
+            checkDatabaseAltered()
             _uiState.update { it.copy(isLoading = false) }
         }
     }
 
     /**
-     * Avvia una sessione di studio filtrata per tag (es. SSE, Autisti).
+     * Carica un quiz standard filtrato per tag.
      */
     fun loadQuiz(mode: QuizMode, tags: List<String>? = null, count: Int? = null) {
         val filtered = filterByTags(databaseQuestions, tags).shuffled()
@@ -87,7 +97,7 @@ class QuizViewModel(
     }
 
     /**
-     * Genera una sessione d'esame bilanciata garantendo almeno una domanda per ogni capitolo.
+     * Genera un esame garantendo la copertura di ogni capitolo (bilanciamento).
      */
     fun loadExam(number: Int = 30, tags: List<String>? = null) {
         val filtered = filterByTags(databaseQuestions, tags)
@@ -96,16 +106,15 @@ class QuizViewModel(
         val chapters = filtered.groupBy { it.category }
         val examQuestions = mutableListOf<QuizQuestion>()
 
-        // 1. Garantisce la copertura di tutti i capitoli disponibili
+        // 1. Un quesito per ogni capitolo
         chapters.forEach { (_, questionsInChapter) ->
             examQuestions.add(questionsInChapter.random())
         }
 
-        // 2. Gestione del numero di domande richiesto rispetto ai capitoli presenti
-        val finalSelection = if (examQuestions.size > number) {
+        // 2. Riempimento fino al numero desiderato
+        val finalSelection = if (examQuestions.size >= number) {
             examQuestions.shuffled().take(number)
         } else {
-            // 3. Riempiamo i posti restanti con domande casuali dal pool filtrato
             val remainingCount = number - examQuestions.size
             val pool = (filtered - examQuestions.toSet()).shuffled()
             examQuestions.addAll(pool.take(remainingCount))
@@ -116,8 +125,9 @@ class QuizViewModel(
     }
 
     /**
-     * Algoritmo SMART: seleziona le domande prioritizzando quelle con bassa precisione,
-     * alta difficoltà percepita e non viste di recente (Spaced Repetition).
+     * ALGORITMO SMART (Spaced Repetition):
+     * Seleziona le domande basandosi su un punteggio di priorità.
+     * Studia questa formula: priorità alta = domande difficili + risposte errate + non viste.
      */
     fun loadSmartQuiz(tags: List<String>? = null, count: Int = 20) {
         val stats = _questionStats.value
@@ -125,16 +135,15 @@ class QuizViewModel(
         
         if (filtered.isEmpty()) return
 
-        // Calcolo del punteggio di priorità per ogni domanda
         val smartQuestions = filtered
             .map { q -> 
                 val stat = stats[q.id] ?: QuestionStat()
                 val currentDiff = if (stat.userDifficulty > 0) stat.userDifficulty else q.difficulty.toFloat()
                 
-                // FORMULA SMART:
-                // + Peso elevato per bassa precisione (Accuracy 0 = 100 punti)
-                // + Peso per difficoltà (Difficoltà 5 = 50 punti)
-                // - Sconto per quesiti a cui si è risposto correttamente in modo costante (CorrectStreak 3 = -45 punti)
+                // FORMULA DI PRIORITÀ:
+                // (1 - Precisione) * 100  -> Pesa gli errori (max 100)
+                // (Difficoltà * 10)       -> Pesa la difficoltà intrinseca (max 50)
+                // (Streak * 15)           -> Sconto se rispondi bene da molte volte
                 val priorityScore = ((1f - stat.accuracy) * 100f) + 
                                    (currentDiff * 10f) - 
                                    (stat.correctStreak * 15f)
@@ -149,19 +158,13 @@ class QuizViewModel(
         startQuiz(smartQuestions, QuizMode.SMART)
     }
 
-    /**
-     * Carica le domande appartenenti a una specifica categoria.
-     */
     fun loadQuizByCategory(category: String, mode: QuizMode, tags: List<String>? = null, count: Int? = null) {
         val filtered = filterByTags(databaseQuestions, tags).filter { it.category == category }.shuffled()
         val questions = if (count != null) filtered.take(count) else filtered
         if (questions.isNotEmpty()) startQuiz(questions, mode)
     }
 
-    private fun filterByTags(
-        questions: List<QuizQuestion>,
-        tags: List<String>?
-    ): List<QuizQuestion> =
+    private fun filterByTags(questions: List<QuizQuestion>, tags: List<String>?): List<QuizQuestion> =
         if (tags.isNullOrEmpty()) questions
         else questions.filter { question -> question.tags.any { it in tags } }
 
@@ -170,8 +173,6 @@ class QuizViewModel(
 
         allQuestions = questions
         val first = questions.first()
-
-        // Calcolo tempo proporzionale per l'esame
         val examTime = if (mode == QuizMode.ESAME) questions.size * SECONDS_PER_EXAM_QUESTION else 0
 
         _uiState.value = QuizUiState(
@@ -189,7 +190,7 @@ class QuizViewModel(
     }
 
     /**
-     * Gestisce la selezione di una risposta da parte dell'utente.
+     * Gestisce il tocco dell'utente su una risposta.
      */
     fun answer(index: Int) {
         _uiState.update { state ->
@@ -210,7 +211,8 @@ class QuizViewModel(
     }
 
     /**
-     * Conferma la risposta selezionata (Modalità Studio).
+     * Conferma la risposta (Modalità Studio).
+     * Salva immediatamente le statistiche perché l'utente potrebbe uscire.
      */
     fun confirmAnswer() {
         _uiState.update { state ->
@@ -219,36 +221,29 @@ class QuizViewModel(
             val question = state.currentQuestion!!
             val correct = question.correct
             val isCorrect = state.selectedAnswer == correct
-            val score = state.score + if (isCorrect) 1 else 0
-
-            recordAnswer(question, isCorrect)
+            
+            // Salvataggio immediato in Modalità Studio
+            recordAnswer(question, isCorrect, saveToDisk = true)
 
             state.copy(
                 answered = true,
                 correctAnswer = correct,
-                score = score,
+                score = state.score + if (isCorrect) 1 else 0,
                 showNextButton = true,
                 sessionResults = state.sessionResults + (question.id to isCorrect)
             )
         }
     }
 
-    /**
-     * Passa alla domanda successiva nella sessione corrente.
-     * Aggiorna lo stato della UI con la nuova domanda o termina il quiz.
-     */
     fun nextQuestion() {
         _uiState.update { state ->
             val nextIndex = state.currentIndex + 1
 
             if (nextIndex >= allQuestions.size) {
-                // Se abbiamo finito le domande, passiamo allo stato finale
                 return@update state.copy(quizFinished = true)
             }
 
             val q = allQuestions[nextIndex]
-
-            // Creiamo un nuovo stato per la nuova domanda
             state.copy(
                 currentQuestion = q,
                 shuffledAnswers = q.answers.shuffled(),
@@ -264,7 +259,8 @@ class QuizViewModel(
     }
 
     /**
-     * Conclude l'esame, calcola il punteggio finale e salva i risultati.
+     * Conclude l'esame e salva tutte le statistiche in un unico blocco (Batch).
+     * Questo ottimizza drasticamente le prestazioni I/O.
      */
     fun submitExam() {
         timerJob?.cancel()
@@ -278,13 +274,16 @@ class QuizViewModel(
                 if (given != null) {
                     val isCorrect = given == question.correct
                     if (isCorrect) score++
-                    recordAnswer(question, isCorrect)
+                    // Aggiorna lo stato in memoria SENZA scrivere su disco ancora
+                    recordAnswer(question, isCorrect, saveToDisk = false)
                     results = results + (question.id to isCorrect)
                 }
             }
 
-            val timeTaken =
-                (state.totalExamTimeSeconds - state.remainingTimeSeconds).coerceAtLeast(0)
+            // Scrittura finale su disco di tutte le modifiche accumulate
+            saveStatsToDisk()
+
+            val timeTaken = (state.totalExamTimeSeconds - state.remainingTimeSeconds).coerceAtLeast(0)
 
             state.copy(
                 score = score,
@@ -296,14 +295,15 @@ class QuizViewModel(
     }
 
     /**
-     * Calcola un indice di preparazione globale (0-100) basato su precisione storica,
-     * risultati recenti, padronanza delle domande e copertura dei capitoli.
+     * CALCOLO INDICE DI PREPARAZIONE:
+     * Un punteggio pesato da 0 a 100 che riflette la tua padronanza.
+     * Studia i pesi: 40% Precisione, 30% Recenza, 20% Padronanza, 10% Consistenza.
      */
     fun calculatePreparationIndex(): PreparationIndex {
         val stats = _questionStats.value
         val questions = databaseQuestions
         if (questions.isEmpty() || stats.isEmpty()) {
-            return PreparationIndex(0, "Nessun dato", "Inizia a rispondere ai quiz per vedere il tuo indice.")
+            return PreparationIndex(0, "Nessun dato", "Esegui dei quiz per vedere il tuo indice.")
         }
 
         val now = System.currentTimeMillis()
@@ -315,42 +315,28 @@ class QuizViewModel(
         var recentAttempts = 0
         var masteredCount = 0
 
-        // Analisi delle statistiche persistite
         stats.values.forEach { stat ->
             totalCorrect += stat.correct
             totalAttempts += stat.attempts
             
-            // Dati dell'ultima settimana
             if (now - stat.lastSeenTimestamp < sevenDaysMs) {
                 recentCorrect += stat.correct
                 recentAttempts += stat.attempts
             }
             
-            // Una domanda è considerata "padroneggiata" se è stata fornita la risposta corretta per 3 volte consecutive
-            if (stat.correctStreak >= 3) {
-                masteredCount++
-            }
+            if (stat.correctStreak >= 3) masteredCount++
         }
 
-        // CALCOLO PESATO DELL'INDICE (0-100):
-        
-        // 1. Componente Precisione (40%): Risultato storico complessivo
         val accuracyScore = if (totalAttempts > 0) (totalCorrect.toFloat() / totalAttempts) * 40 else 0f
-
-        // 2. Componente Recenza (30%): Performance dell'ultima settimana (riflette lo studio attuale)
         val recentScore = if (recentAttempts > 0) (recentCorrect.toFloat() / recentAttempts) * 30 else 0f
-
-        // 3. Componente Padronanza (20%): Quante domande sono state consolidate
         val masteryScore = (masteredCount.toFloat() / questions.size) * 20
-
-        // 4. Componente Consistenza (10%): Penalità se ci sono capitoli con bassa precisione (< 65%)
+        
         val chapterStats = getCategoryStats()
         val weakChapters = chapterStats.count { it.precisionPercent in 0..64 }
         val consistencyScore = (10f - (weakChapters * 1f)).coerceAtLeast(0f)
 
         val finalScore = (accuracyScore + recentScore + masteryScore + consistencyScore).toInt().coerceIn(0, 100)
 
-        // Assegnazione del livello testuale basato sulla nuova soglia dell'85%
         val level = when {
             finalScore >= 95 -> "Ottimo"
             finalScore >= 90 -> "Buono"
@@ -360,22 +346,20 @@ class QuizViewModel(
         }
 
         val details = "Precisione: ${(accuracyScore/40*100).toInt()}% | Padronanza: $masteredCount/${questions.size} domande"
-
         return PreparationIndex(finalScore, level, details)
     }
 
     /**
-     * Calcola le statistiche aggregate per ogni combinazione di categoria e tag.
-     * Questo evita che categorie con lo stesso nome ma tag diversi vengano raggruppate.
+     * Aggrega le statistiche per categoria.
+     * Ottimizzato per raggruppare i tag correttamente senza ridondanze.
      */
     fun getCategoryStats(tags: List<String>? = null): List<CategoryStat> {
         val stats = _questionStats.value
         val filtered = filterByTags(databaseQuestions, tags)
         
-        // Esplodiamo le domande per tag per calcolare le statistiche per ogni associazione Tag-Categoria
         return filtered
             .flatMap { q -> 
-                val tagsToUse = if (q.tags.isEmpty()) listOf("Senza Tag") else q.tags
+                val tagsToUse = q.tags.ifEmpty { listOf("Senza Tag") }
                 tagsToUse.map { tag -> q to tag }
             }
             .groupBy { (q, tag) -> q.category to tag }
@@ -394,8 +378,7 @@ class QuizViewModel(
                     weightedCorrect += weight * stat.accuracy
                 }
 
-                val precision =
-                    if (weightSum > 0) ((weightedCorrect / weightSum) * 100).toInt() else -1
+                val precision = if (weightSum > 0) ((weightedCorrect / weightSum) * 100).toInt() else -1
 
                 CategoryStat(
                     category = category,
@@ -413,17 +396,18 @@ class QuizViewModel(
 
     fun resetStats() {
         _questionStats.value = emptyMap()
-        viewModelScope.launch {
-            repository.saveStats(emptyMap())
-        }
+        viewModelScope.launch { repository.saveStats(emptyMap()) }
     }
 
-    private fun recordAnswer(question: QuizQuestion, correct: Boolean) {
+    /**
+     * Registra l'esito di una risposta e aggiorna la difficoltà dinamica.
+     */
+    private fun recordAnswer(question: QuizQuestion, correct: Boolean, saveToDisk: Boolean) {
         val currentStats = _questionStats.value.toMutableMap()
         val current = currentStats[question.id] ?: QuestionStat()
         
-        // Calcolo Difficoltà Dinamica:
-        // Se corretta, la domanda diventa più facile (-0.2), se errata più difficile (+0.5)
+        // DIFFICOLTÀ DINAMICA:
+        // Se rispondi bene, la domanda "pesa" meno (-0.2). Se sbagli, pesa di più (+0.5).
         val baseDiff = if (current.userDifficulty > 0) current.userDifficulty else question.difficulty.toFloat()
         val newDifficulty = if (correct) {
             (baseDiff - 0.2f).coerceAtLeast(1.0f)
@@ -440,34 +424,43 @@ class QuizViewModel(
         )
         
         _questionStats.value = currentStats
-        viewModelScope.launch {
-            repository.saveStats(currentStats)
-        }
+        if (saveToDisk) saveStatsToDisk()
+    }
+
+    private fun saveStatsToDisk() {
+        viewModelScope.launch { repository.saveStats(_questionStats.value) }
     }
 
     /**
-     * Avvia il timer per la modalità esame.
+     * TIMER ALTA PRECISIONE:
+     * Invece di usare delay(1000), calcoliamo il momento esatto di fine esame.
+     * Questo evita che il timer "rallenti" se il dispositivo è sotto carico.
      */
     private fun startExamTimer(durationSeconds: Int) {
         timerJob?.cancel()
 
         timerJob = viewModelScope.launch {
-            var time = durationSeconds
-
-            while (time > 0) {
-                delay(1000.milliseconds)
-                time--
-                _uiState.update { it.copy(remainingTimeSeconds = time) }
+            val endTime = System.currentTimeMillis() + (durationSeconds * 1000L)
+            
+            while (true) {
+                val now = System.currentTimeMillis()
+                val remaining = ((endTime - now) / 1000).toInt()
+                
+                if (remaining <= 0) {
+                    _uiState.update { it.copy(remainingTimeSeconds = 0) }
+                    submitExam()
+                    break
+                }
+                
+                _uiState.update { it.copy(remainingTimeSeconds = remaining) }
+                delay(250.milliseconds) // Aggiorniamo più spesso del secondo per una UI fluida
             }
-
-            submitExam()
         }
     }
 
     fun checkBeforeSubmit() {
         val state = _uiState.value
         val missing = allQuestions.count { !state.userAnswers.containsKey(it.id) }
-
         if (missing > 0) {
             _uiState.update { it.copy(showSubmitDialog = true, unansweredCount = missing) }
         } else {
@@ -479,52 +472,32 @@ class QuizViewModel(
         _uiState.update { it.copy(showSubmitDialog = false) }
     }
 
-    /**
-     * Aggiunge o aggiorna una domanda nel database.
-     */
     fun saveQuestion(question: QuizQuestion) {
         viewModelScope.launch {
-            val currentList = _databaseQuestions.value
-            val updatedList = currentList.toMutableList()
-            val index = updatedList.indexOfFirst { it.id == question.id }
-            
-            if (index != -1) {
-                updatedList[index] = question
-            } else {
+            val currentList = _databaseQuestions.value.toMutableList()
+            val index = currentList.indexOfFirst { it.id == question.id }
+            if (index != -1) currentList[index] = question
+            else {
                 val newId = if (currentList.isEmpty()) 1 else currentList.maxOf { it.id } + 1
-                updatedList.add(question.copy(id = newId))
+                currentList.add(question.copy(id = newId))
             }
-            
-            repository.saveQuestions(updatedList)
-            _databaseQuestions.value = updatedList
-            allQuestions = updatedList
+            repository.saveQuestions(currentList)
+            _databaseQuestions.value = currentList
+            allQuestions = currentList
+            checkDatabaseAltered()
         }
     }
 
-    /**
-     * Elimina una domanda dal database.
-     */
     fun deleteQuestion(questionId: Int) {
         viewModelScope.launch {
             val updatedList = _databaseQuestions.value.filter { it.id != questionId }
             repository.saveQuestions(updatedList)
             _databaseQuestions.value = updatedList
             allQuestions = updatedList
+            checkDatabaseAltered()
         }
     }
 
-    /**
-     * Ritorna tutte le domande nel database per l'editor.
-     */
-    fun getAllDatabaseQuestions(): List<QuizQuestion> = databaseQuestions
-
-    /**
-     * Resetta lo stato del quiz per tornare alla home.
-     * Cancella il timer se attivo.
-     */
-    /**
-     * Ritorna le statistiche per ogni singola domanda di una categoria filtrata per tag.
-     */
     fun getQuestionStatsByCategory(category: String, tag: String): List<Pair<QuizQuestion, QuestionStat>> {
         val stats = _questionStats.value
         return databaseQuestions.filter { 

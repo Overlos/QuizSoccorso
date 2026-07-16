@@ -24,63 +24,35 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 /**
- * Schermata di login per l'accesso all'area amministrativa.
+ * Dialog di esclusione responsabilità per l'area admin.
  */
 @Composable
-fun AdminLoginScreen(
-    onLoginSuccess: () -> Unit,
-    onBack: () -> Unit
+fun AdminDisclaimerDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
 ) {
-    var password by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Area Riservata", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        OutlinedTextField(
-            value = password,
-            onValueChange = { 
-                password = it
-                error = false
-            },
-            label = { Text("Password Admin") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            isError = error,
-            modifier = Modifier.fillMaxWidth()
-        )
-        
-        if (error) {
-            Text("Password errata", color = MaterialTheme.colorScheme.error)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Esclusione di Responsabilità") },
+        text = {
+            Text(
+                "L'accesso all'area amministrativa permette di modificare, aggiungere o eliminare domande dal database locale.\n\n" +
+                "Qualsiasi modifica apportata è sotto la tua esclusiva responsabilità. " +
+                "L'integrità e l'accuratezza dei contenuti originali non sono più garantite una volta che il database viene alterato.\n\n" +
+                "Si consiglia di esportare un backup prima di procedere."
+            )
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text("Ho capito e accetto")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Annulla")
+            }
         }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Button(
-            onClick = {
-                if (password == "admin") {
-                    onLoginSuccess()
-                } else {
-                    error = true
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Accedi")
-        }
-        
-        TextButton(onClick = onBack) {
-            Text("Annulla")
-        }
-    }
+    )
 }
 
 /**

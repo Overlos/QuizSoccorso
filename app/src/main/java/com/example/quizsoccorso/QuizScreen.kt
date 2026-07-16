@@ -4,8 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -25,6 +28,7 @@ fun QuizScreen(
     onSubmitClick: () -> Unit,
     onSubmitExam: () -> Unit,
     onCloseDialog: () -> Unit,
+    onReportQuestionError: (QuizQuestion) -> Unit,
     onRestart: () -> Unit
 ) {
     val haptic = LocalHapticFeedback.current
@@ -98,7 +102,11 @@ fun QuizScreen(
     )
 
     // Metadati della domanda (capitolo, difficoltà, tag)
-    QuestionInfo(question = question, alreadyAnswered = state.alreadyAnsweredBefore)
+    QuestionInfo(
+        question = question, 
+        alreadyAnswered = state.alreadyAnsweredBefore,
+        onReportError = { onReportQuestionError(question) }
+    )
 
     // Visualizzazione del testo della domanda
     QuestionCard(question = question)
@@ -159,15 +167,33 @@ private fun QuizHeader(
 }
 
 @Composable
-private fun QuestionInfo(question: QuizQuestion, alreadyAnswered: Boolean) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = "Categoria: ${question.category}", style = MaterialTheme.typography.labelMedium)
-        Text(text = "Difficoltà: ${question.difficulty}/5", style = MaterialTheme.typography.labelMedium)
-        if (question.tags.isNotEmpty()) {
-            Text(text = "Tag: ${question.tags.joinToString(", ")}", style = MaterialTheme.typography.labelMedium)
+private fun QuestionInfo(
+    question: QuizQuestion, 
+    alreadyAnswered: Boolean,
+    onReportError: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(text = "Categoria: ${question.category}", style = MaterialTheme.typography.labelMedium)
+            Text(text = "Difficoltà: ${question.difficulty}/5", style = MaterialTheme.typography.labelMedium)
+            if (question.tags.isNotEmpty()) {
+                Text(text = "Tag: ${question.tags.joinToString(", ")}", style = MaterialTheme.typography.labelMedium)
+            }
+            if (alreadyAnswered) {
+                Text(text = "🔁 Hai già risposto in precedenza", style = MaterialTheme.typography.labelMedium)
+            }
         }
-        if (alreadyAnswered) {
-            Text(text = "🔁 Hai già risposto in precedenza", style = MaterialTheme.typography.labelMedium)
+        
+        IconButton(onClick = onReportError) {
+            Icon(
+                imageVector = Icons.Default.BugReport, 
+                contentDescription = "Segnala errore in questa domanda",
+                tint = MaterialTheme.colorScheme.secondary
+            )
         }
     }
 }
