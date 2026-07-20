@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,27 @@ class MainActivity : ComponentActivity() {
     // Inizializzazione lazy del repository per evitare caricamenti inutili all'avvio
     private val quizRepository by lazy { QuizRepository(applicationContext) }
     private val settingsRepository by lazy { SettingsRepository(applicationContext) }
+
+    // Variabili temporanee per gestire il salvataggio del file JSON prima dell'apertura di GitHub
+    private var pendingJsonData: String = ""
+    private var pendingModifiedCount: Int = 0
+
+    // Launcher per il "Salva con nome" (Storage Access Framework)
+    private val saveJsonLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        uri?.let {
+            try {
+                contentResolver.openOutputStream(it)?.use { stream ->
+                    stream.write(pendingJsonData.toByteArray())
+                }
+                // Una volta salvato il file, apriamo GitHub con le istruzioni formali
+                openGitHubFormal(pendingModifiedCount)
+            } catch (_: Exception) {
+                Toast.makeText(this, "Errore durante il salvataggio del file", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +86,7 @@ class MainActivity : ComponentActivity() {
                 var selectedMode by remember { mutableStateOf(QuizMode.STUDIO) }
 
                 // Stati per la visualizzazione di dialog e tutorial
-                var showStudyConfig by remember { mutableStateOf(false) }
+                var showStudyConfig by remember { mutableStateOf(value = false) }
                 var showTutorial by remember { mutableStateOf(false) }
                 var showAdminDisclaimer by remember { mutableStateOf(false) }
                 var adminDisclaimerConfirmed by remember { mutableStateOf(false) }
@@ -90,17 +112,15 @@ class MainActivity : ComponentActivity() {
                             showAdminDisclaimer = false
                             adminDisclaimerConfirmed = true
                             screen = "editor"
-                        },
-                        onDismiss = { showAdminDisclaimer = false }
-                    )
+                        }
+                    ) { showAdminDisclaimer = false }
                 }
 
                 // Visualizzazione disclaimer database alterato (richiamata dall'icona in home)
                 if (showAlteredDisclaimer) {
                     AdminDisclaimerDialog(
-                        onConfirm = { showAlteredDisclaimer = false },
-                        onDismiss = { showAlteredDisclaimer = false }
-                    )
+                        onConfirm = { showAlteredDisclaimer = false }
+                    ) { showAlteredDisclaimer = false }
                 }
 
                 // Scelta metodo segnalazione errore
@@ -156,19 +176,19 @@ class MainActivity : ComponentActivity() {
                                 onSectionSelected = { selectedSection = it },
                                 onModeSelected = { mode ->
                                     selectedMode = mode
-                                    when (mode) {
-                                        QuizMode.STUDIO -> screen = "study"
+                                    screen = when (mode) {
+                                        QuizMode.STUDIO -> "study"
                                         QuizMode.SMART -> {
                                             quizViewModel.loadSmartQuiz(selectedSection.tags, 20)
-                                            screen = "quiz"
+                                            "quiz"
                                         }
-                                        QuizMode.ESAME -> screen = "exam_config"
+                                        QuizMode.ESAME -> "exam_config"
                                     }
                                 },
                                 onStatsClick = { screen = "stats" },
                                 onSettingsClick = { screen = "settings" },
                                 onTutorialClick = { showTutorial = true },
-                                onAdminClick = { 
+                                onEditorClick = {
                                     if (adminDisclaimerConfirmed) {
                                         screen = "editor"
                                     } else {
@@ -318,7 +338,8 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onSubmitClick = { quizViewModel.checkBeforeSubmit() },
                                 onCloseDialog = { quizViewModel.closeSubmitDialog() },
-                                onReportQuestionError = { reportQuestionToProcess = it }
+                                onReportQuestionError = { reportQuestionToProcess = it },
+                                onClearWarning = { quizViewModel.clearExamWarning() }
                             )
                         }
                     }
@@ -336,7 +357,7 @@ class MainActivity : ComponentActivity() {
 
         val uri = androidx.core.content.FileProvider.getUriForFile(
             this,
-            "${packageName}.fileprovider",
+            "$packageName.fileprovider",
             file
         )
 
@@ -362,26 +383,37 @@ class MainActivity : ComponentActivity() {
             val json = com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(modified)
             
             if (asGitHubIssue) {
-                val body = "Sottopongo le seguenti modifiche al database delle domande.\n\n" +
-                        "```json\n$json\n```"
-                
-                // Se il JSON è troppo lungo per un URL (limite prudenziale ~1500), usiamo lo sharing file
-                if (body.length > 1500) {
-                    shareAsFile(modified, "Allego il file con le mie modifiche per la revisione.")
-                } else {
-                    val url = "https://github.com/Overlos/QuizSoccorso/issues/new?title=Export Modifiche Database&body=${android.net.Uri.encode(body)}"
-                    startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url)))
-                }
+                // Per GitHub: prima salviamo il file, poi apriamo la pagina con le istruzioni
+                pendingJsonData = json
+                pendingModifiedCount = modified.size
+                saveJsonLauncher.launch("modified_questions.json")
             } else {
-                // Condivisione universale (Email pre-compilata)
-                val body = "Ciao,\n\nin allegato trovi le modifiche apportate al database dei quiz.\n\n" +
-                        "Dettaglio modifiche:\n" +
-                        "------------------\n" +
-                        json.take(500) + (if (json.length > 500) "..." else "") + "\n" +
-                        "------------------\n"
-                
-                shareAsFile(modified, body, "overlos.dev@gmail.com")
+                // Per Email: usiamo l'Intent di condivisione diretto (più immediato)
+                val bodyText = "Si sottopone alla vostra attenzione una proposta di aggiornamento del database. " +
+                        "Numero di quesiti modificati: ${modified.size}. In allegato il file JSON con i dettagli delle modifiche."
+                shareAsFile(modified, bodyText, "overlos.dev@gmail.com")
             }
+        }
+    }
+
+    /**
+     * Apre la pagina GitHub con un messaggio formale di istruzioni.
+     */
+    private fun openGitHubFormal(count: Int) {
+        val bodyText = "Proposta di aggiornamento del database.\n\n" +
+                "Numero di quesiti modificati: $count.\n\n" +
+                "Si prega di allegare il file JSON precedentemente salvato nella memoria del dispositivo."
+        
+        val githubUri = "https://github.com/Overlos/QuizSoccorso/issues/new".toUri()
+            .buildUpon()
+            .appendQueryParameter("title", "Proposta di aggiornamento database")
+            .appendQueryParameter("body", bodyText)
+            .build()
+        
+        try {
+            startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, githubUri))
+        } catch (_: Exception) {
+            Toast.makeText(this, "Impossibile aprire il browser", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -392,17 +424,42 @@ class MainActivity : ComponentActivity() {
             "${packageName}.fileprovider",
             file
         )
+
+        // Intent per l'invio email o condivisione file
         val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-            type = "application/json"
+            // Se c'è un destinatario, forziamo il tipo a email per suggerire le app giuste
+            type = if (recipient != null) "message/rfc822" else "application/json"
+            
             if (recipient != null) {
                 putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(recipient))
             }
-            putExtra(android.content.Intent.EXTRA_SUBJECT, "QuizSoccorso - Proposta Modifica Domande")
-            putExtra(android.content.Intent.EXTRA_STREAM, uri)
+            putExtra(android.content.Intent.EXTRA_SUBJECT, "Proposta di aggiornamento database")
             putExtra(android.content.Intent.EXTRA_TEXT, body)
+            putExtra(android.content.Intent.EXTRA_STREAM, uri)
+            
+            // ClipData è essenziale per trasferire i permessi di lettura alle app di terze parti (es. Gmail)
+            clipData = android.content.ClipData.newRawUri(null, uri)
             addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        startActivity(android.content.Intent.createChooser(intent, "Invia Modifiche"))
+
+        try {
+            if (recipient != null) {
+                // Per l'invio a un destinatario specifico (Email), usiamo un selettore mailto: 
+                // per filtrare solo le app di messaggistica/email
+                val selectorIntent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
+                    data = android.net.Uri.parse("mailto:")
+                }
+                intent.selector = selectorIntent
+                startActivity(android.content.Intent.createChooser(intent, "Invia email..."))
+            } else {
+                startActivity(android.content.Intent.createChooser(intent, "Esporta File JSON"))
+            }
+        } catch (_: Exception) {
+            // Fallback: rimuoviamo il selettore se fallisce
+            intent.selector = null
+            intent.type = "*/*"
+            startActivity(android.content.Intent.createChooser(intent, "Condividi file"))
+        }
     }
 
     /**
@@ -450,6 +507,7 @@ class MainActivity : ComponentActivity() {
                 "Categoria: ${question.category}\n\n" +
                 "Descrizione dell'errore:\n"
         
+        // Costruiamo un URI mailto completo per una migliore compatibilità
         val uriString = "mailto:overlos.dev@gmail.com" +
                 "?subject=${android.net.Uri.encode(subject)}" +
                 "&body=${android.net.Uri.encode(body)}"
@@ -461,7 +519,7 @@ class MainActivity : ComponentActivity() {
         try {
             startActivity(intent)
         } catch (_: Exception) {
-            // Fallback nel caso in cui il parsing dell'URI lungo fallisca su alcuni client
+            // Se ACTION_SENDTO con URI completo fallisce, usiamo il metodo classico con putExtra
             val fallbackIntent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
                 data = android.net.Uri.parse("mailto:overlos.dev@gmail.com")
                 putExtra(android.content.Intent.EXTRA_SUBJECT, subject)
@@ -469,7 +527,7 @@ class MainActivity : ComponentActivity() {
             }
             try {
                 startActivity(fallbackIntent)
-            } catch (_: Exception) {
+            } catch (__: Exception) {
                 Toast.makeText(this, "Nessuna app email trovata", Toast.LENGTH_SHORT).show()
             }
         }
@@ -480,6 +538,7 @@ class QuizViewModelFactory(
     private val repository: QuizRepository
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(QuizViewModel::class.java)) {
             return QuizViewModel(repository) as T
@@ -492,6 +551,7 @@ class SettingsViewModelFactory(
     private val repository: SettingsRepository
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             return SettingsViewModel(repository) as T

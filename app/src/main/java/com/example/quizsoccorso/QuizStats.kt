@@ -1,15 +1,17 @@
 package com.example.quizsoccorso
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * Statistica accumulata per una singola domanda, salvata in modo persistente.
  * Viene utilizzata dagli algoritmi SMART per determinare la frequenza di comparsa.
  */
 data class QuestionStat(
-    val attempts: Int = 0,         // Numero di volte che l'utente ha fornito una risposta a questo quesito
-    val correct: Int = 0,          // Numero di risposte corrette registrate
-    val lastSeenTimestamp: Long = 0, // Istante temporale dell'ultima visualizzazione
-    val correctStreak: Int = 0,    // Successi consecutivi (Spaced Repetition)
-    val userDifficulty: Float = -1f // Valutazione della difficoltà basata sulle performance individuali
+    @SerializedName("attempts") val attempts: Int = 0,         // Numero di volte che l'utente ha fornito una risposta a questo quesito
+    @SerializedName("correct") val correct: Int = 0,          // Numero di risposte corrette registrate
+    @SerializedName("lastSeenTimestamp") val lastSeenTimestamp: Long = 0, // Istante temporale dell'ultima visualizzazione
+    @SerializedName("correctStreak") val correctStreak: Int = 0,    // Successi consecutivi (Spaced Repetition)
+    @SerializedName("userDifficulty") val userDifficulty: Float = -1f // Valutazione della difficoltà basata sulle performance individuali
 ) {
     /**
      * Calcola la percentuale di precisione (0.0 a 1.0) per questa specifica domanda.

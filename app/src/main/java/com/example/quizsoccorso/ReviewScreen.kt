@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 fun ReviewScreen(
     questions: List<QuizQuestion>,
     userAnswers: Map<Int, String>,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     BackHandler(onBack = onBack)
 

@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -29,7 +28,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AdminDisclaimerDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -76,7 +75,7 @@ fun QuestionEditorScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     // Gestione tasto indietro di sistema specifica per l'editor
-    BackHandler(enabled = selectedTag != null || searchQuery.isNotEmpty()) {
+    BackHandler(enabled = (selectedTag != null) || searchQuery.isNotEmpty()) {
         if (searchQuery.isNotEmpty()) searchQuery = ""
         else if (selectedCategory != null) selectedCategory = null
         else selectedTag = null
@@ -133,7 +132,7 @@ fun QuestionEditorScreen(
                         )
                         if (selectedTag != null && searchQuery.isEmpty()) {
                             Text(
-                                text = "${selectedTag}${if (selectedCategory != null) " > $selectedCategory" else ""}",
+                                text = "$selectedTag${if (selectedCategory != null) " > $selectedCategory" else ""}",
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -400,10 +399,10 @@ fun EditQuestionDialog(
 ) {
     var text by remember { mutableStateOf(question.question) }
     var category by remember { mutableStateOf(question.category) }
-    var answers by remember { mutableStateOf(question.answers.toMutableList()) }
+    var answers by remember { mutableStateOf(value = question.answers) }
     
     val initialCorrectIndex = answers.indexOf(question.correct).takeIf { it != -1 } ?: -1
-    var selectedCorrectIndex by remember { mutableStateOf(initialCorrectIndex) }
+    var selectedCorrectIndex by remember { mutableIntStateOf(value = initialCorrectIndex) }
     
     var explanation by remember { mutableStateOf(question.explanation) }
     var source by remember { mutableStateOf(question.source) }
@@ -482,7 +481,7 @@ fun EditQuestionDialog(
                                 onValueChange = {
                                     val newList = answers.toMutableList()
                                     newList[index] = it
-                                    answers = newList
+                                    answers = newList.toList()
                                 },
                                 label = { Text("Risposta ${index + 1}") },
                                 modifier = Modifier.weight(1f).padding(start = 8.dp),
@@ -509,7 +508,7 @@ fun EditQuestionDialog(
                         onSave(question.copy(
                             question = text,
                             category = category,
-                            tags = tagsStr.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+                            tags = tagsStr.split(",").asSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList(),
                             difficulty = difficulty.toIntOrNull() ?: 3,
                             answers = answers,
                             correct = answers[selectedCorrectIndex],

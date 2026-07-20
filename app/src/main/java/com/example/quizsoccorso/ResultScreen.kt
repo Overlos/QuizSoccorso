@@ -23,7 +23,7 @@ private const val EXAM_PASS_DENOMINATOR = 30
 private data class CategorySummary(
     val category: String,
     val correct: Int,
-    val answered: Int
+    val answered: Int,
 )
 
 /**
@@ -42,7 +42,7 @@ fun ResultScreen(
     onReviewClick: () -> Unit = {}
 ) {
     // Calcolo della percentuale di risposte corrette (arrotondata all'intero più vicino)
-    val percentage = if (total > 0) score * 100 / total else 0
+    val percentage = if (total > 0) (score * 100) / total else 0
 
     // Calcolo della soglia di superamento proporzionale (es. 25/30 = 83.3%)
     val passThreshold = (total * EXAM_PASS_NUMERATOR + EXAM_PASS_DENOMINATOR - 1) / EXAM_PASS_DENOMINATOR
@@ -50,6 +50,7 @@ fun ResultScreen(
 
     // Raggruppamento dei risultati per capitolo per mostrare dove l'utente è andato meglio
     val categorySummaries = questions
+        .asSequence()
         .groupBy { it.category }
         .map { (category, categoryQuestions) ->
             CategorySummary(
@@ -101,27 +102,29 @@ fun ResultScreen(
             }
         )
 
-        if (mode == QuizMode.ESAME) {
+        if (mode == QuizMode.ESAME || mode == QuizMode.SMART) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Risultato dell'esame (Superato/Non Superato)
-            Text(
-                text = if (examPassed) "✅ ESAME SUPERATO" else "❌ ESAME NON SUPERATO",
-                style = MaterialTheme.typography.headlineSmall,
-                color = if (examPassed) Color(0xFF2E7D32) else Color(0xFFC62828)
-            )
+            if (mode == QuizMode.ESAME) {
+                // Risultato dell'esame (Superato/Non Superato)
+                Text(
+                    text = if (examPassed) "✅ ESAME SUPERATO" else "❌ ESAME NON SUPERATO",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = if (examPassed) Color(0xFF2E7D32) else Color(0xFFC62828)
+                )
 
-            Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-            // Indicazione della soglia minima calcolata
-            Text(
-                text = "Soglia minima: $passThreshold/$total risposte corrette",
-                style = MaterialTheme.typography.labelSmall
-            )
+                // Indicazione della soglia minima calcolata
+                Text(
+                    text = "Soglia minima: $passThreshold/$total risposte corrette",
+                    style = MaterialTheme.typography.labelSmall
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            // Tempo totale impiegato
+            // Tempo totale impiegato (mostrato sia per ESAME che per SMART)
             val minutes = timeTakenSeconds / 60
             val seconds = timeTakenSeconds % 60
             Text(
@@ -158,7 +161,7 @@ fun ResultScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // Azioni finali
-        if (mode == QuizMode.ESAME && score < total) {
+        if ((mode == QuizMode.ESAME || mode == QuizMode.SMART) && score < total) {
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 onClick = onReviewClick

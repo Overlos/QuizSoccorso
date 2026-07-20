@@ -3,6 +3,7 @@ package com.example.quizsoccorso
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,10 +23,10 @@ fun HomeScreen(
     onStatsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onTutorialClick: () -> Unit = {},
-    onAdminClick: () -> Unit = {},
+    onEditorClick: () -> Unit = {},
     isAltered: Boolean = false,
     onAlteredClick: () -> Unit = {},
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
 ) {
     Column(
         modifier = Modifier
@@ -41,18 +42,8 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (isAltered) {
-                IconButton(onClick = onAlteredClick) {
-                    Icon(
-                        Icons.Default.Warning, 
-                        contentDescription = "Database Alterato",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
             IconButton(onClick = onTutorialClick) {
-                Icon(Icons.Default.HelpOutline, contentDescription = "Tutorial")
+                Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "Tutorial")
             }
             IconButton(onClick = onSettingsClick) {
                 Icon(Icons.Default.Settings, contentDescription = "Impostazioni")
@@ -217,12 +208,27 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Area Admin per l'editing delle domande (protetta da password)
-        TextButton(
-            onClick = onAdminClick,
-            modifier = Modifier.align(Alignment.End)
+        // Editor delle domande (permette modifiche al database locale)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("⚙ Area Admin", style = MaterialTheme.typography.labelSmall)
+            if (isAltered) {
+                IconButton(onClick = onAlteredClick) {
+                    Icon(
+                        Icons.Default.Warning,
+                        contentDescription = "Database Alterato",
+                        tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+            TextButton(
+                onClick = onEditorClick
+            ) {
+                Text("⚙ Editor Domande", style = MaterialTheme.typography.labelSmall)
+            }
         }
     }
 }

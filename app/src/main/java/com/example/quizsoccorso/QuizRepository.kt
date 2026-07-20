@@ -2,7 +2,6 @@ package com.example.quizsoccorso
 
 import android.content.Context
 import android.net.Uri
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -18,11 +17,14 @@ import java.io.File
  * In questo progetto usiamo il file system interno dell'app e file in formato JSON.
  */
 class QuizRepository(
-    private val context: Context
+    private val context: Context,
 ) {
 
     // Gson con "Pretty Printing" rende i file JSON leggibili anche da un umano se aperti
     private val gson = GsonBuilder().setPrettyPrinting().create()
+
+    // Cache in memoria delle domande originali per velocizzare i confronti
+    private var originalQuestionsCache: List<QuizQuestion>? = null
 
     /**
      * Carica le domande dal database locale o dagli assets.
@@ -48,7 +50,9 @@ class QuizRepository(
     }
 
     private fun loadAssetQuestions(): List<QuizQuestion> {
-        return parseJson(loadAssetJson())
+        return originalQuestionsCache ?: parseJson(loadAssetJson()).also { 
+            originalQuestionsCache = it 
+        }
     }
 
     /**
@@ -66,28 +70,63 @@ class QuizRepository(
 
     /**
      * Identifica le domande aggiunte o modificate. Utile per l'icona di avviso in Home.
+     * Il confronto viene fatto sul contenuto per evitare falsi positivi dovuti al cambio di ID.
      */
     suspend fun getModifiedQuestions(): List<QuizQuestion> = withContext(Dispatchers.IO) {
         val current = loadQuestions()
         val original = loadAssetQuestions()
-        val originalMap = original.associateBy { it.id }
+        
+        // Creiamo una mappa basata sul contenuto per una ricerca efficiente
+        val originalContentSet = original.asSequence().map { it.toContentString() }.toSet()
 
-        current.filter { q ->
-            val orig = originalMap[q.id]
-            // Una domanda è considerata modificata se il suo ID non esisteva o se il contenuto è diverso
-            orig == null || orig != q
-        }
+        current.filter { it.toContentString() !in originalContentSet }
+    }
+
+    private fun QuizQuestion.toContentString(): String {
+        return "${question.trim()}|${category.trim()}|${correct.trim()}|${answers.sorted().joinToString(",")}|${tags.sorted().joinToString(",")}"
     }
 
     /**
-     * Salva le domande su disco.
-     * Context.MODE_PRIVATE assicura che il file sia accessibile solo a questa applicazione.
+     * Salva le domande su disco in modo atomico.
      */
     suspend fun saveQuestions(questions: List<QuizQuestion>) = withContext(Dispatchers.IO) {
         val sanitized = ensureUniqueIds(questions)
         val json = gson.toJson(sanitized)
-        context.openFileOutput("quiz.json", Context.MODE_PRIVATE).use { 
-            it.write(json.toByteArray()) 
+        
+        // Prima di salvare, creiamo un backup del file attuale
+        createBackup(fileName = "quiz.json")
+        
+        writeAtomic("quiz.json", json)
+    }
+
+    /**
+     * Esegue una scrittura atomica: scrive su un file temporaneo e poi lo rinomina.
+     * Questo previene la corruzione dei dati in caso di crash durante la scrittura.
+     */
+    private fun writeAtomic(fileName: String, content: String) {
+        val file = File(context.filesDir, fileName)
+        val tmpFile = File(context.filesDir, "$fileName.tmp")
+        
+        try {
+            tmpFile.writeText(content)
+            if (!tmpFile.renameTo(file)) {
+                // Se il rename fallisce (raro), usiamo il metodo classico come fallback
+                file.writeText(content)
+            }
+        } catch (e: Exception) {
+            tmpFile.delete()
+            throw e
+        }
+    }
+
+    /**
+     * Crea una copia di backup del file specificato.
+     */
+    private fun createBackup(fileName: String) {
+        val file = File(context.filesDir, fileName)
+        if (file.exists()) {
+            val backupFile = File(context.filesDir, "$fileName.bak")
+            file.copyTo(backupFile, overwrite = true)
         }
     }
 
@@ -100,7 +139,7 @@ class QuizRepository(
         var nextId = (questions.maxOfOrNull { it.id } ?: 0) + 1
         
         return questions.map { q ->
-            if (q.id <= 0 || q.id in usedIds) {
+            if (q.id <= 0 || (q.id in usedIds)) {
                 val newQ = q.copy(id = nextId++)
                 usedIds.add(newQ.id)
                 newQ
@@ -163,14 +202,11 @@ class QuizRepository(
     }
 
     /**
-     * Salva le statistiche. 
-     * NOTA: Questa operazione è onerosa in termini di I/O, va chiamata con parsimonia.
+     * Salva le statistiche in modo atomico.
      */
     suspend fun saveStats(stats: Map<Int, QuestionStat>) = withContext(Dispatchers.IO) {
         val json = gson.toJson(stats)
-        context.openFileOutput(STATS_FILE, Context.MODE_PRIVATE).use { 
-            it.write(json.toByteArray()) 
-        }
+        writeAtomic(STATS_FILE, json)
     }
 
     companion object {

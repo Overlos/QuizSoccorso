@@ -29,9 +29,19 @@ fun QuizScreen(
     onSubmitExam: () -> Unit,
     onCloseDialog: () -> Unit,
     onReportQuestionError: (QuizQuestion) -> Unit,
-    onRestart: () -> Unit
+    onRestart: () -> Unit,
+    onClearWarning: () -> Unit = {},
 ) {
     val haptic = LocalHapticFeedback.current
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    // Mostra l'avviso se presente (es. domande < capitoli)
+    LaunchedEffect(state.examWarning) {
+        state.examWarning?.let {
+            android.widget.Toast.makeText(context, it, android.widget.Toast.LENGTH_LONG).show()
+            onClearWarning()
+        }
+    }
 
     // Gestione della vibrazione al tocco (se abilitata nelle impostazioni)
     val handleAnswerClick: (Int) -> Unit = { index ->
@@ -43,7 +53,7 @@ fun QuizScreen(
 
     if (state.quizFinished) {
         // Se la sessione è conclusa, decidiamo se mostrare il risultato o la revisione degli errori
-        var showReview by remember { mutableStateOf(false) }
+        var showReview by remember { mutableStateOf(value = false) }
         
         // Gestione del tasto indietro per chiudere la revisione e tornare al risultato
         BackHandler(enabled = showReview) {
@@ -53,9 +63,8 @@ fun QuizScreen(
         if (showReview) {
             ReviewScreen(
                 questions = state.questions,
-                userAnswers = state.userAnswers,
-                onBack = { showReview = false }
-            )
+                userAnswers = state.userAnswers
+            ) { showReview = false }
         } else {
             ResultScreen(
                 score = state.score,
@@ -240,7 +249,7 @@ private fun QuizActionButtons(
     onNextQuestion: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        if (state.mode == QuizMode.STUDIO && !state.answered) {
+        if (((state.mode == QuizMode.STUDIO) || (state.mode == QuizMode.SMART)) && !state.answered) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = state.answerSelected,
@@ -250,7 +259,7 @@ private fun QuizActionButtons(
             }
         }
 
-        if (state.mode == QuizMode.ESAME || state.mode == QuizMode.SMART) {
+        if (state.mode == QuizMode.ESAME) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {

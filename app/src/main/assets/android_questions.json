@@ -18,24 +18,6 @@
     "source": ""
   },
   {
-    "id": 3,
-    "question": "Qual è il rapporto compressioni : insufflazioni nell'RCP (rianimazione cardio-polmonare) adulto?",
-    "category": "BLS-D",
-    "tags": [
-      "SSE"
-    ],
-    "difficulty": 1,
-    "answers": [
-      "30:1",
-      "30:2",
-      "15:2",
-      "15:1"
-    ],
-    "correct": "30:2",
-    "explanation": "",
-    "source": ""
-  },
-  {
     "id": 4,
     "question": "Quando un paziente è iperpiretico?",
     "category": "ABCDE",
@@ -286,5 +268,366 @@
     "correct": "Non fornite nessuna informazione e chiedete di rispettare la privacy del paziente",
     "explanation": "",
     "source": ""
+  },
+  {
+    "answers": [
+      "30:1",
+      "30:2",
+      "15:2",
+      "15:1"
+    ],
+    "category": "BLS-D",
+    "correct": "30:2",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 3,
+    "question": "Qual è il rapporto compressioni/insufflazioni nell\u0027RCP (rianimazione cardio-polmonare) adulto?",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "La cavità addominale dai polmoni",
+      "La cavità addominale da quella toracica",
+      "La cavità toracica in due emitoraci",
+      "La cavità toracica dal cuore"
+    ],
+    "category": "Anatomia",
+    "correct": "La cavità addominale da quella toracica",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 18,
+    "question": "Il diaframma è il muscolo che separa:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Polso carotideo",
+      "Polso pedidio",
+      "Polso brachiale",
+      "Polso femorale"
+    ],
+    "category": "Anatomia",
+    "correct": "Polso carotideo",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 19,
+    "question": "Quale polso cerco in un adulto cosciente, con respiro normale se è assente il polso radiale? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Posizione semiseduta",
+      "Posizione prona",
+      "Posizione supina",
+      "Posizione eretta"
+    ],
+    "category": "Operatività",
+    "correct": "Posizione semiseduta",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 20,
+    "question": "Qual è la miglior posizione da far assumere ad un paziente dispnoico? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "15:2",
+      "5:1",
+      "30:2",
+      "15:1"
+    ],
+    "category": "PBLS-D",
+    "correct": "15:2",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 21,
+    "question": "Il rapporto compressioni/insufflazioni durante l\u0027RCP (Reanimazione Cardio-Polmonare) su un bambino è:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Bisogna iniziare immediatamente le CTE ",
+      "Bisogna avvisare immediatamente la SOREU",
+      "Bisogna immediatamente cercare il polso carotideo",
+      "Bisogna immediatamente eseguire almeno 2 ventilazione con O2 ad alti flussi"
+    ],
+    "category": "PBLS-D",
+    "correct": "Bisogna iniziare immediatamente le CTE ",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 23,
+    "question": "Dopo aver constatato l\u0027assenza di coscienza e di respiro efficace in un infante:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "3:1",
+      "5:1",
+      "15:2",
+      "15:1"
+    ],
+    "category": "PBLS-D",
+    "correct": "3:1",
+    "difficulty": 2,
+    "explanation": "",
+    "id": 24,
+    "question": "Durante la reanimazione neonatale, qual è il rapporto compressioni/insufflazioni? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Pianto valido e tono muscolare ",
+      "Riflessi pupullari e motori",
+      "Lucidità del cordone ombelicale ",
+      "Dimensione del cranio "
+    ],
+    "category": "Parto",
+    "correct": "Pianto valido e tono muscolare ",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 25,
+    "question": "Che cosa è indispensabile valutare nel neonato? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Se avviene prima della 37. settimana",
+      "Se avviene prima della 40. settimana ",
+      "Se avviene prima del termine previsto dal ginecologo",
+      "Se avviene prima della 30. settimana "
+    ],
+    "category": "Parto",
+    "correct": "Se avviene prima della 37. settimana",
+    "difficulty": 2,
+    "explanation": "",
+    "id": 26,
+    "question": "Quando si può parlare di parto pre-termine? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Il taglio del cordone ombelicale ",
+      "L\u0027avvolgimento del neonato in un panno caldo e umido",
+      "Il frizionamento del torace",
+      "La percussione delicata del dorso del neonato"
+    ],
+    "category": "Parto",
+    "correct": "L\u0027avvolgimento del neonato in un panno caldo e umido",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 27,
+    "question": "Appena si è verificato il parto, si esegue come prima azione:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Trattare i primi feriti visibili immediatamente ",
+      "Rapportarsi con i VVFF ed effettuare una ricognizione ",
+      "Contattare la SOREU per descrivere l\u0027evento seguendo lo schema METHANE",
+      "Aprire la busta maxi-emergenza su indicazione di SOREU "
+    ],
+    "category": "Maxi-emergenza",
+    "correct": "Trattare i primi feriti visibili immediatamente ",
+    "difficulty": 2,
+    "explanation": "",
+    "id": 28,
+    "question": "Quale fra i seguenti non è un compito previsto per il 1. mezzo MSB a giungere sul luogo di una maxi-emergenza? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "15:2",
+      "5:1",
+      "15:1",
+      "3:1"
+    ],
+    "category": "PBLS-D",
+    "correct": "15:2",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 29,
+    "question": "Il rapporto compressioni/insufflazioni durante l\u0027RCP (Reanimazione Cardio-Polmonare) su un infante è:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Più ossigeno (O2) ",
+      "Più anidride carbonica (CO2) ",
+      "Meno plasma",
+      "Più globuli rossi"
+    ],
+    "category": "Anatomia",
+    "correct": "Più ossigeno (O2) ",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 30,
+    "question": "Il sangue arterioso contiene normalmente, rispetto al sangue venoso:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Portano il sangue dal cuore verso la periferia ",
+      "Portano sempre sangue ossigenato ",
+      "Portano sangue dalla periferia al cuore",
+      "Sono perlopiù superficiali"
+    ],
+    "category": "Anatomia",
+    "correct": "Portano il sangue dal cuore verso la periferia ",
+    "difficulty": 2,
+    "explanation": "",
+    "id": 31,
+    "question": "Le arterie sono vasi che:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Pompare il sangue ",
+      "Filtrare il sangue ",
+      "Ossigenare il sangue ",
+      "Produrre globuli rossi"
+    ],
+    "category": "Anatomia",
+    "correct": "Pompare il sangue ",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 32,
+    "question": "Qual è la funzione principale del cuore?",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Scambiare gas negli alveoli",
+      "Filtrare il sangue",
+      "Espellere i gas nocivi",
+      "Arricchire il sangue di emoglobina"
+    ],
+    "category": "Anatomia",
+    "correct": "Scambiare gas negli alveoli",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 33,
+    "question": "Qual è la funzione principale dei polmoni? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Sistole",
+      "Diastole",
+      "Peristalsi",
+      "Emesi"
+    ],
+    "category": "Anatomia",
+    "correct": "Sistole",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 34,
+    "question": "La pressione arteriosa massima si rileva durante la:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "Diastole ",
+      "Sistole",
+      "Peristalsi",
+      "Emesi"
+    ],
+    "category": "Anatomia",
+    "correct": "Diastole ",
+    "difficulty": 3,
+    "explanation": "",
+    "id": 35,
+    "question": "La pressione arteriosa minima si rileva durante la:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+
+  {
+    "answers": [
+      "Ha le stesse indicazioni valide per l\u0027adulto ",
+      "È da evitare in caso di evento traumatico",
+      "Non si può utilizzare",
+      "Va usata solo su indicazione di Soreu"
+    ],
+    "category": "PBLS-D",
+    "correct": "Ha le stesse indicazioni valide per l\u0027adulto ",
+    "difficulty": 2,
+    "explanation": "",
+    "id": 22,
+    "question": "La cannula di Mayo su un bambino di età uguale o superiore di 8 anni:",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
+  },
+  {
+    "answers": [
+      "30:2",
+      "15:2",
+      "15:1",
+      "30:1"
+    ],
+    "category": "BLS-D",
+    "correct": "30:2",
+    "difficulty": 1,
+    "explanation": "",
+    "id": 3,
+    "question": "Qual è il rapporto compressioni/insufflazioni durante l\u0027RCP (Reanimazione Cardio-Polmonare) adulto? ",
+    "source": "",
+    "tags": [
+      "SSE"
+    ]
   }
 ]

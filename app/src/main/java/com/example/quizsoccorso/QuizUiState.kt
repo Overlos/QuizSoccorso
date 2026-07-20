@@ -53,8 +53,10 @@ data class QuizUiState(
     val questions: List<QuizQuestion> = emptyList(),
     val sessionResults: Map<Int, Boolean> = emptyMap(),
     val timeTakenSeconds: Int = 0,
+    val startTimeMillis: Long = 0, // Per tracciare la durata delle sessioni non-esame
     
     // Flag ausiliari
     val alreadyAnsweredBefore: Boolean = false, // Indica se la domanda è "nuova" per l'utente
-    val isLoading: Boolean = false // Mostra un caricamento durante l'importazione
+    val isLoading: Boolean = false, // Mostra un caricamento durante l'importazione
+    val examWarning: String? = null // Messaggio di avviso per l'esame (es. domande < capitoli)
 )

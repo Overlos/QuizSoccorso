@@ -27,7 +27,7 @@ data class PreparationIndex(
  * Implementa gli algoritmi SMART e il calcolo dell'indice di preparazione.
  */
 class QuizViewModel(
-    private val repository: QuizRepository
+    private val repository: QuizRepository,
 ) : ViewModel() {
 
     companion object {
@@ -105,23 +105,37 @@ class QuizViewModel(
 
         val chapters = filtered.groupBy { it.category }
         val examQuestions = mutableListOf<QuizQuestion>()
-
-        // 1. Un quesito per ogni capitolo
-        chapters.forEach { (_, questionsInChapter) ->
-            examQuestions.add(questionsInChapter.random())
+        
+        var warning: String? = null
+        if (number < chapters.size) {
+            warning = "Nota: Hai scelto $number domande ma ci sono ${chapters.size} capitoli. Alcuni capitoli saranno esclusi casualmente."
         }
 
-        // 2. Riempimento fino al numero desiderato
-        val finalSelection = if (examQuestions.size >= number) {
-            examQuestions.shuffled().take(number)
-        } else {
+        // 1. Un quesito per ogni capitolo (se possibile entro il limite 'number')
+        val chapterList = chapters.keys.shuffled()
+        val chaptersToCover = if (number < chapters.size) chapterList.take(number) else chapterList
+
+        chaptersToCover.forEach { category ->
+            examQuestions.add(chapters[category]!!.random())
+        }
+
+        // 2. Riempimento fino al numero desiderato (se non abbiamo già raggiunto il limite)
+        if (examQuestions.size < number) {
             val remainingCount = number - examQuestions.size
             val pool = (filtered - examQuestions.toSet()).shuffled()
             examQuestions.addAll(pool.take(remainingCount))
-            examQuestions.shuffled()
         }
 
-        startQuiz(finalSelection, QuizMode.ESAME)
+        startQuiz(examQuestions.shuffled(), QuizMode.ESAME)
+        
+        // Impostiamo l'avviso nello stato dopo aver avviato il quiz
+        if (warning != null) {
+            _uiState.update { it.copy(examWarning = warning) }
+        }
+    }
+    
+    fun clearExamWarning() {
+        _uiState.update { it.copy(examWarning = null) }
     }
 
     /**
@@ -135,17 +149,29 @@ class QuizViewModel(
         
         if (filtered.isEmpty()) return
 
+        val now = System.currentTimeMillis()
+
         val smartQuestions = filtered
+            .asSequence()
             .map { q -> 
                 val stat = stats[q.id] ?: QuestionStat()
                 val currentDiff = if (stat.userDifficulty > 0) stat.userDifficulty else q.difficulty.toFloat()
                 
-                // FORMULA DI PRIORITÀ:
+                // CALCOLO GIORNI DALL'ULTIMA VOLTA (Recenza)
+                val daysSinceLastSeen = if (stat.lastSeenTimestamp > 0) {
+                    (now - stat.lastSeenTimestamp) / (1000 * 60 * 60 * 24)
+                } else {
+                    30L // Priorità alta per domande mai viste
+                }
+
+                // FORMULA DI PRIORITÀ AGGIORNATA:
                 // (1 - Precisione) * 100  -> Pesa gli errori (max 100)
                 // (Difficoltà * 10)       -> Pesa la difficoltà intrinseca (max 50)
+                // (Recenza * 2)           -> Più tempo è passato, più aumenta la priorità (max 40)
                 // (Streak * 15)           -> Sconto se rispondi bene da molte volte
                 val priorityScore = ((1f - stat.accuracy) * 100f) + 
-                                   (currentDiff * 10f) - 
+                                   (currentDiff * 10f) +
+                                   ((daysSinceLastSeen * 2f).coerceAtMost(40f)) - 
                                    (stat.correctStreak * 15f)
                 
                 q to priorityScore
@@ -153,6 +179,7 @@ class QuizViewModel(
             .sortedByDescending { it.second }
             .map { it.first }
             .take(count)
+            .toList()
             .shuffled()
 
         startQuiz(smartQuestions, QuizMode.SMART)
@@ -183,7 +210,8 @@ class QuizViewModel(
             questions = questions,
             alreadyAnsweredBefore = hasAnsweredBefore(first.id),
             totalExamTimeSeconds = examTime,
-            remainingTimeSeconds = examTime
+            remainingTimeSeconds = examTime,
+            startTimeMillis = System.currentTimeMillis()
         )
 
         if (mode == QuizMode.ESAME) startExamTimer(examTime)
@@ -197,14 +225,21 @@ class QuizViewModel(
             if (state.answered) return@update state
 
             val selected = state.shuffledAnswers[index]
+            val questionId = state.currentQuestion!!.id
 
-            if (state.mode == QuizMode.STUDIO) {
-                state.copy(selectedAnswer = selected, answerSelected = true)
+            // Registriamo sempre la risposta data per permettere la revisione finale in ogni modalità
+            val updatedUserAnswers = state.userAnswers + (questionId to selected)
+
+            if (state.mode == QuizMode.STUDIO || state.mode == QuizMode.SMART) {
+                state.copy(
+                    selectedAnswer = selected, 
+                    answerSelected = true,
+                    userAnswers = updatedUserAnswers
+                )
             } else {
-                val questionId = state.currentQuestion!!.id
                 state.copy(
                     selectedAnswer = selected,
-                    userAnswers = state.userAnswers + (questionId to selected)
+                    userAnswers = updatedUserAnswers
                 )
             }
         }
@@ -240,7 +275,17 @@ class QuizViewModel(
             val nextIndex = state.currentIndex + 1
 
             if (nextIndex >= allQuestions.size) {
-                return@update state.copy(quizFinished = true)
+                // Calcolo tempo impiegato per le modalità non-esame (dove non c'è il timer a scalare)
+                val duration = if (state.mode != QuizMode.ESAME && state.startTimeMillis > 0) {
+                    ((System.currentTimeMillis() - state.startTimeMillis) / 1000).toInt()
+                } else {
+                    state.timeTakenSeconds
+                }
+                
+                return@update state.copy(
+                    quizFinished = true,
+                    timeTakenSeconds = duration
+                )
             }
 
             val q = allQuestions[nextIndex]
@@ -276,7 +321,7 @@ class QuizViewModel(
                     if (isCorrect) score++
                     // Aggiorna lo stato in memoria SENZA scrivere su disco ancora
                     recordAnswer(question, isCorrect, saveToDisk = false)
-                    results = results + (question.id to isCorrect)
+                    results += (question.id to isCorrect)
                 }
             }
 
@@ -345,7 +390,7 @@ class QuizViewModel(
             else -> "Insufficiente"
         }
 
-        val details = "Precisione: ${(accuracyScore/40*100).toInt()}% | Padronanza: $masteredCount/${questions.size} domande"
+        val details = "Precisione: ${((accuracyScore / 40) * 100).toInt()}% | Padronanza: $masteredCount/${questions.size} domande"
         return PreparationIndex(finalScore, level, details)
     }
 
@@ -358,6 +403,7 @@ class QuizViewModel(
         val filtered = filterByTags(databaseQuestions, tags)
         
         return filtered
+            .asSequence()
             .flatMap { q -> 
                 val tagsToUse = q.tags.ifEmpty { listOf("Senza Tag") }
                 tagsToUse.map { tag -> q to tag }
@@ -389,6 +435,7 @@ class QuizViewModel(
                 )
             }
             .sortedWith(compareBy({ it.tags.firstOrNull() }, { it.category }))
+            .toList()
     }
 
     private fun hasAnsweredBefore(questionId: Int): Boolean =
