@@ -352,21 +352,29 @@ class MainActivity : ComponentActivity() {
      * Gestisce la condivisione del file database.json tramite Intent.
      */
     private fun shareDatabaseFile() {
-        val file = quizRepository.getDatabaseFile()
-        if (!file.exists()) return
+        try {
+            val file = quizRepository.getDatabaseFile()
+            if (!file.exists()) {
+                Toast.makeText(this, "Il database non esiste ancora", Toast.LENGTH_SHORT).show()
+                return
+            }
 
-        val uri = androidx.core.content.FileProvider.getUriForFile(
-            this,
-            "$packageName.fileprovider",
-            file
-        )
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                this,
+                "$packageName.fileprovider",
+                file
+            )
 
-        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-            type = "application/json"
-            putExtra(android.content.Intent.EXTRA_STREAM, uri)
-            addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                type = "application/json"
+                putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                clipData = android.content.ClipData.newRawUri(null, uri)
+                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(android.content.Intent.createChooser(intent, "Esporta Database"))
+        } catch (e: Exception) {
+            Toast.makeText(this, "Errore durante l'esportazione: ${e.message}", Toast.LENGTH_LONG).show()
         }
-        startActivity(android.content.Intent.createChooser(intent, "Esporta Database"))
     }
 
     /**
@@ -419,46 +427,50 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun shareAsFile(modified: List<QuizQuestion>, body: String, recipient: String? = null) {
         val file = quizRepository.saveToTempFile(modified, "modified_questions.json") ?: return
-        val uri = androidx.core.content.FileProvider.getUriForFile(
-            this@MainActivity,
-            "${packageName}.fileprovider",
-            file
-        )
-
-        // Intent per l'invio email o condivisione file
-        val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-            // Se c'è un destinatario, forziamo il tipo a email per suggerire le app giuste
-            type = if (recipient != null) "message/rfc822" else "application/json"
-            
-            if (recipient != null) {
-                putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(recipient))
-            }
-            putExtra(android.content.Intent.EXTRA_SUBJECT, "Proposta di aggiornamento database")
-            putExtra(android.content.Intent.EXTRA_TEXT, body)
-            putExtra(android.content.Intent.EXTRA_STREAM, uri)
-            
-            // ClipData è essenziale per trasferire i permessi di lettura alle app di terze parti (es. Gmail)
-            clipData = android.content.ClipData.newRawUri(null, uri)
-            addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-
+        
         try {
-            if (recipient != null) {
-                // Per l'invio a un destinatario specifico (Email), usiamo un selettore mailto: 
-                // per filtrare solo le app di messaggistica/email
-                val selectorIntent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
-                    data = android.net.Uri.parse("mailto:")
+            val uri = androidx.core.content.FileProvider.getUriForFile(
+                this@MainActivity,
+                "$packageName.fileprovider",
+                file
+            )
+
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                // message/rfc822 è lo standard per le email e garantisce la comparsa di Gmail e altri client
+                type = if (recipient != null) "message/rfc822" else "application/json"
+                
+                if (recipient != null) {
+                    putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(recipient))
                 }
-                intent.selector = selectorIntent
-                startActivity(android.content.Intent.createChooser(intent, "Invia email..."))
-            } else {
-                startActivity(android.content.Intent.createChooser(intent, "Esporta File JSON"))
+                putExtra(android.content.Intent.EXTRA_SUBJECT, "Proposta di aggiornamento database")
+                putExtra(android.content.Intent.EXTRA_TEXT, body)
+                putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                
+                // ClipData e FLAG_GRANT_READ_URI_PERMISSION sono vitali per l'accesso all'allegato
+                clipData = android.content.ClipData.newRawUri(null, uri)
+                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-        } catch (_: Exception) {
-            // Fallback: rimuoviamo il selettore se fallisce
-            intent.selector = null
-            intent.type = "*/*"
-            startActivity(android.content.Intent.createChooser(intent, "Condividi file"))
+
+            val chooserTitle = if (recipient != null) "Invia tramite Email..." else "Esporta File JSON"
+            startActivity(android.content.Intent.createChooser(intent, chooserTitle))
+        } catch (e: Exception) {
+            // Fallback: se l'invio specifico fallisce, proviamo la condivisione generica
+            try {
+                val fallbackIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "*/*"
+                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                        this@MainActivity,
+                        "$packageName.fileprovider",
+                        file
+                    )
+                    putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                    clipData = android.content.ClipData.newRawUri(null, uri)
+                    addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(android.content.Intent.createChooser(fallbackIntent, "Condividi file"))
+            } catch (e2: Exception) {
+                Toast.makeText(this, "Impossibile condividere il file: ${e2.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
