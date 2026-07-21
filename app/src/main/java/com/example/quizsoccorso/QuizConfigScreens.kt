@@ -31,17 +31,17 @@ fun ExamConfigScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Configura Esame", style = MaterialTheme.typography.headlineMedium)
+        Text(androidx.compose.ui.res.stringResource(R.string.config_exam), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Il tempo e la soglia di sbarramento verranno calcolati proporzionalmente in base al numero di domande scelto.",
+            androidx.compose.ui.res.stringResource(R.string.config_exam_desc),
             style = MaterialTheme.typography.bodySmall,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("Numero di domande:", style = MaterialTheme.typography.titleMedium)
+        Text(androidx.compose.ui.res.stringResource(R.string.num_questions), style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         options.forEach { count ->
@@ -50,7 +50,7 @@ fun ExamConfigScreen(
                 selected = selectedCount == count,
                 onClick = { selectedCount = count },
                 label = { 
-                    Text(if (isOfficial) "$count (Ufficiale ⭐)" else "$count") 
+                    Text(if (isOfficial) androidx.compose.ui.res.stringResource(R.string.official_suffix, count) else "$count") 
                 },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
             )
@@ -62,11 +62,11 @@ fun ExamConfigScreen(
             onClick = { onStartExam(selectedCount) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Inizia Esame")
+            Text(androidx.compose.ui.res.stringResource(R.string.start_exam_btn))
         }
 
         TextButton(onClick = onBack) {
-            Text("Annulla")
+            Text(androidx.compose.ui.res.stringResource(R.string.cancel))
         }
     }
 }
@@ -83,13 +83,13 @@ fun StudyConfigDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Numero di domande") },
+        title = { Text(androidx.compose.ui.res.stringResource(R.string.num_questions)) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                Text("Quante domande vuoi affrontare in questa sessione di studio misto?")
+                Text(androidx.compose.ui.res.stringResource(R.string.study_misto_desc))
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 options.forEach { count ->
@@ -97,7 +97,7 @@ fun StudyConfigDialog(
                         onClick = { onConfirm(count) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("$count domande")
+                        Text(androidx.compose.ui.res.stringResource(R.string.num_questions_format, count))
                     }
                 }
                 
@@ -105,14 +105,14 @@ fun StudyConfigDialog(
                     onClick = { onConfirm(null) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Tutte le domande (Full)")
+                    Text(androidx.compose.ui.res.stringResource(R.string.all_questions_full))
                 }
             }
         },
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Annulla")
+                Text(androidx.compose.ui.res.stringResource(R.string.cancel))
             }
         }
     )

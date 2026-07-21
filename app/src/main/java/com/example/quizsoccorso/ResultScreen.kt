@@ -71,7 +71,7 @@ fun ResultScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Quiz terminato",
+            text = androidx.compose.ui.res.stringResource(R.string.quiz_finished),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -79,7 +79,7 @@ fun ResultScreen(
 
         // Punteggio numerico e percentuale
         Text(
-            text = "$score / $total",
+            text = androidx.compose.ui.res.stringResource(R.string.score_format, score, total),
             style = MaterialTheme.typography.displayMedium
         )
 
@@ -108,7 +108,7 @@ fun ResultScreen(
             if (mode == QuizMode.ESAME) {
                 // Risultato dell'esame (Superato/Non Superato)
                 Text(
-                    text = if (examPassed) "✅ ESAME SUPERATO" else "❌ ESAME NON SUPERATO",
+                    text = androidx.compose.ui.res.stringResource(if (examPassed) R.string.exam_passed else R.string.exam_failed),
                     style = MaterialTheme.typography.headlineSmall,
                     color = if (examPassed) Color(0xFF2E7D32) else Color(0xFFC62828)
                 )
@@ -117,7 +117,7 @@ fun ResultScreen(
 
                 // Indicazione della soglia minima calcolata
                 Text(
-                    text = "Soglia minima: $passThreshold/$total risposte corrette",
+                    text = androidx.compose.ui.res.stringResource(R.string.min_threshold, passThreshold, total),
                     style = MaterialTheme.typography.labelSmall
                 )
 
@@ -128,7 +128,7 @@ fun ResultScreen(
             val minutes = timeTakenSeconds / 60
             val seconds = timeTakenSeconds % 60
             Text(
-                text = "Tempo impiegato: %02d:%02d".format(minutes, seconds),
+                text = androidx.compose.ui.res.stringResource(R.string.time_taken_format, minutes, seconds),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -137,7 +137,7 @@ fun ResultScreen(
         if (categorySummaries.isNotEmpty()) {
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Riepilogo per capitolo",
+                text = androidx.compose.ui.res.stringResource(R.string.chapter_summary),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -147,7 +147,7 @@ fun ResultScreen(
                     categorySummaries.forEachIndexed { index, summary ->
                         val summaryPercentage = summary.correct * 100 / summary.answered
                         Text(
-                            text = "${summary.category}: ${summary.correct}/${summary.answered} ($summaryPercentage%)",
+                            text = androidx.compose.ui.res.stringResource(R.string.category_summary_format, summary.category, summary.correct, summary.answered, summaryPercentage),
                             style = MaterialTheme.typography.bodyMedium
                         )
                         if (index != categorySummaries.lastIndex) {
@@ -166,7 +166,7 @@ fun ResultScreen(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 onClick = onReviewClick
             ) {
-                Text("Vedi errori")
+                Text(androidx.compose.ui.res.stringResource(R.string.view_errors))
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -175,7 +175,7 @@ fun ResultScreen(
             modifier = Modifier.fillMaxWidth(0.8f),
             onClick = onRestart
         ) {
-            Text("Ricomincia")
+            Text(androidx.compose.ui.res.stringResource(R.string.restart))
         }
 
         Spacer(modifier = Modifier.height(16.dp))

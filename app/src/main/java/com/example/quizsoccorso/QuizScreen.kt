@@ -152,7 +152,7 @@ private fun QuizHeader(
             val minutes = remainingTimeSeconds / 60
             val seconds = remainingTimeSeconds % 60
             Text(
-                text = String.format("Tempo rimanente: %02d:%02d", minutes, seconds),
+                text = androidx.compose.ui.res.stringResource(R.string.timer_label, minutes, seconds),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -162,7 +162,7 @@ private fun QuizHeader(
             )
         } else if (mode == QuizMode.SMART) {
             Text(
-                text = "🧠 Modalità SMART (${currentIndex + 1}/$totalQuestions)",
+                text = "🧠 ${androidx.compose.ui.res.stringResource(R.string.mode_smart_title)} (${currentIndex + 1}/$totalQuestions)",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.tertiary
             )
@@ -187,13 +187,13 @@ private fun QuestionInfo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = "Categoria: ${question.category}", style = MaterialTheme.typography.labelMedium)
-            Text(text = "Difficoltà: ${question.difficulty}/5", style = MaterialTheme.typography.labelMedium)
+            Text(text = androidx.compose.ui.res.stringResource(R.string.category_label, question.category), style = MaterialTheme.typography.labelMedium)
+            Text(text = androidx.compose.ui.res.stringResource(R.string.difficulty_label, question.difficulty), style = MaterialTheme.typography.labelMedium)
             if (question.tags.isNotEmpty()) {
-                Text(text = "Tag: ${question.tags.joinToString(", ")}", style = MaterialTheme.typography.labelMedium)
+                Text(text = androidx.compose.ui.res.stringResource(R.string.tag_label, question.tags.joinToString(", ")), style = MaterialTheme.typography.labelMedium)
             }
             if (alreadyAnswered) {
-                Text(text = "🔁 Hai già risposto in precedenza", style = MaterialTheme.typography.labelMedium)
+                Text(text = androidx.compose.ui.res.stringResource(R.string.already_answered), style = MaterialTheme.typography.labelMedium)
             }
         }
         
@@ -255,7 +255,7 @@ private fun QuizActionButtons(
                 enabled = state.answerSelected,
                 onClick = onConfirmAnswer
             ) {
-                Text("Conferma")
+                Text(androidx.compose.ui.res.stringResource(R.string.confirm))
             }
         }
 
@@ -270,14 +270,14 @@ private fun QuizActionButtons(
                     }
                 }
             ) {
-                Text(if (state.currentIndex == state.totalQuestions - 1) "Inoltra risposte" else "Avanti")
+                Text(androidx.compose.ui.res.stringResource(if (state.currentIndex == state.totalQuestions - 1) R.string.submit_answers else R.string.next))
             }
         }
 
         if (state.showNextButton) {
             ExplanationCard(question = state.currentQuestion)
             Button(modifier = Modifier.fillMaxWidth(), onClick = onNextQuestion) {
-                Text("Prossima domanda")
+                Text(androidx.compose.ui.res.stringResource(R.string.next_question))
             }
         }
     }
@@ -292,7 +292,7 @@ private fun ExplanationCard(question: QuizQuestion?) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Spiegazione:",
+                    text = androidx.compose.ui.res.stringResource(R.string.explanation_label),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -300,7 +300,7 @@ private fun ExplanationCard(question: QuizQuestion?) {
                 Text(text = question.explanation, style = MaterialTheme.typography.bodyMedium)
                 if (question.source.isNotBlank()) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Fonte: ${question.source}", style = MaterialTheme.typography.labelSmall)
+                    Text(text = androidx.compose.ui.res.stringResource(R.string.source_label, question.source), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -311,9 +311,9 @@ private fun ExplanationCard(question: QuizQuestion?) {
 private fun SubmitConfirmDialog(unansweredCount: Int, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Attenzione") },
-        text = { Text("Hai ancora $unansweredCount domande senza risposta.\n\nVuoi consegnare comunque?") },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Consegna") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annulla") } }
+        title = { Text(androidx.compose.ui.res.stringResource(R.string.attention)) },
+        text = { Text(androidx.compose.ui.res.stringResource(R.string.submit_confirm_message, unansweredCount)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(androidx.compose.ui.res.stringResource(R.string.submit)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(androidx.compose.ui.res.stringResource(R.string.cancel)) } }
     )
 }

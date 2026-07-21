@@ -19,13 +19,16 @@ import com.example.quizsoccorso.ui.utils.MarkdownUtils
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppLogicGuideScreen(onBack: () -> Unit) {
+    // Gestione tasto indietro di sistema
+    androidx.activity.compose.BackHandler(onBack = onBack)
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Logiche e Funzionamento") },
+                title = { Text(androidx.compose.ui.res.stringResource(R.string.guide_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Indietro")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = androidx.compose.ui.res.stringResource(R.string.back))
                     }
                 }
             )
@@ -40,52 +43,29 @@ fun AppLogicGuideScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             GuideSection(
-                title = "🧠 Algoritmo Quiz SMART",
-                content = """
-                    La modalità SMART utilizza un algoritmo di priorità per selezionare i quesiti più utili per il tuo percorso di apprendimento.
-                    
-                    Viene assegnato un punteggio a ogni domanda basato su:
-                    1. **Precisione Storica**: Le lacune conoscitive identificate aumentano la priorità.
-                    2. **Difficoltà Soggettiva**: I quesiti che hai valutato come complessi compaiono con maggiore frequenza.
-                    3. **Spaced Repetition (Ripetizione Dilazionata)**: Quando rispondi correttamente a un quesito in modo costante, l'app dilata i tempi prima di riproporlo, favorendo la memoria a lungo termine.
-                """.trimIndent()
+                title = androidx.compose.ui.res.stringResource(R.string.guide_alg_smart_title),
+                content = androidx.compose.ui.res.stringResource(R.string.guide_alg_smart_content)
             )
 
             GuideSection(
-                title = "📊 Indice di Preparazione",
-                content = """
-                    L'indice globale (0-100) non è una semplice media, ma una valutazione ponderata della tua competenza:
-                    
-                    - **Precisione (40%)**: La percentuale complessiva di risposte corrette.
-                    - **Recenza (30%)**: Le performance degli ultimi 7 giorni riflettono lo stato attuale della tua preparazione.
-                    - **Padronanza (20%)**: Indica la quota di quesiti a cui hai fornito una risposta corretta in almeno 3 occasioni consecutive.
-                    - **Consistenza (10%)**: Valuta l'uniformità dello studio tra i diversi capitoli disponibili.
-                """.trimIndent()
+                title = androidx.compose.ui.res.stringResource(R.string.guide_prep_index_title),
+                content = androidx.compose.ui.res.stringResource(R.string.guide_prep_index_content)
             )
 
             GuideSection(
-                title = "🎯 Soglie di Valutazione",
-                content = """
-                    Per garantirti una preparazione d'eccellenza, abbiamo definito soglie di merito rigorose:
-                    
-                    - **Ottimo (>= 95%)**: Dimostrazione di padronanza quasi totale della materia.
-                    - **Buono (>= 90%)**: Conoscenza solida e affidabile.
-                    - **Sufficiente (>= 85%)**: Requisito minimo per considerarsi pronti all'esame.
-                    - **Da ripassare (< 85%)**: Segnala la necessità di approfondire ulteriormente gli argomenti.
-                """.trimIndent()
+                title = androidx.compose.ui.res.stringResource(R.string.guide_thresholds_title),
+                content = androidx.compose.ui.res.stringResource(R.string.guide_thresholds_content)
             )
 
             GuideSection(
-                title = "📈 Difficoltà Dinamica",
-                content = """
-                    L'applicazione monitora costantemente le tue risposte. In caso di errore, la domanda viene considerata più critica per il tuo studio. Al contrario, quando dimostri padronanza della risposta, l'algoritmo ne riduce la priorità.
-                """.trimIndent()
+                title = androidx.compose.ui.res.stringResource(R.string.guide_dynamic_diff_title),
+                content = androidx.compose.ui.res.stringResource(R.string.guide_dynamic_diff_content)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
             
             Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-                Text("Ho capito")
+                Text(androidx.compose.ui.res.stringResource(R.string.guide_understood))
             }
         }
     }

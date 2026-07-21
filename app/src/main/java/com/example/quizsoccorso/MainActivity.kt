@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                 // Una volta salvato il file, apriamo GitHub con le istruzioni formali
                 openGitHubFormal(pendingModifiedCount)
             } catch (_: Exception) {
-                Toast.makeText(this, "Errore durante il salvataggio del file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_saving_file), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -75,7 +75,16 @@ class MainActivity : ComponentActivity() {
                 val databasePicker = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.GetContent()
                 ) { uri ->
-                    uri?.let { quizViewModel.importDatabase(it) }
+                    uri?.let { 
+                        quizViewModel.importDatabase(it) { reassignedCount ->
+                            val message = if (reassignedCount > 0) {
+                                getString(R.string.db_imported_reassigned, reassignedCount)
+                            } else {
+                                getString(R.string.db_imported_success)
+                            }
+                            Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
 
                 // Stati locali per la navigazione tra le schermate e la selezione dei filtri
@@ -91,6 +100,7 @@ class MainActivity : ComponentActivity() {
                 var showAdminDisclaimer by remember { mutableStateOf(false) }
                 var adminDisclaimerConfirmed by remember { mutableStateOf(false) }
                 var showAlteredDisclaimer by remember { mutableStateOf(false) }
+                var showExitConfirmation by remember { mutableStateOf(false) }
                 var reportQuestionToProcess by remember { mutableStateOf<QuizQuestion?>(null) }
 
                 // Osservazione dello stato principale della UI del quiz e delle statistiche
@@ -127,14 +137,14 @@ class MainActivity : ComponentActivity() {
                 reportQuestionToProcess?.let { question ->
                     AlertDialog(
                         onDismissRequest = { reportQuestionToProcess = null },
-                        title = { Text("Segnala Errore") },
-                        text = { Text("Come vuoi segnalare l'errore per questa domanda?") },
+                        title = { Text(androidx.compose.ui.res.stringResource(R.string.report_error_title)) },
+                        text = { Text(androidx.compose.ui.res.stringResource(R.string.report_error_message)) },
                         confirmButton = {
                             TextButton(onClick = {
                                 openGitHubIssues(question)
                                 reportQuestionToProcess = null
                             }) {
-                                Text("GitHub")
+                                Text(androidx.compose.ui.res.stringResource(R.string.github))
                             }
                         },
                         dismissButton = {
@@ -142,7 +152,7 @@ class MainActivity : ComponentActivity() {
                                 sendErrorEmail(question)
                                 reportQuestionToProcess = null
                             }) {
-                                Text("Email")
+                                Text(androidx.compose.ui.res.stringResource(R.string.email))
                             }
                         }
                     )
@@ -150,7 +160,38 @@ class MainActivity : ComponentActivity() {
 
                 // Gestione del tasto "Indietro" di sistema per la navigazione tra le schermate
                 BackHandler(enabled = screen != "home") {
-                    screen = "home"
+                    when (screen) {
+                        "quiz" -> {
+                            if (!uiState.quizFinished) {
+                                showExitConfirmation = true
+                            } else {
+                                screen = "home"
+                            }
+                        }
+                        "guide", "disclaimer" -> screen = "settings"
+                        else -> screen = "home"
+                    }
+                }
+
+                if (showExitConfirmation) {
+                    AlertDialog(
+                        onDismissRequest = { showExitConfirmation = false },
+                        title = { Text(androidx.compose.ui.res.stringResource(R.string.exit_quiz_title)) },
+                        text = { Text(androidx.compose.ui.res.stringResource(R.string.exit_quiz_message)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                showExitConfirmation = false
+                                screen = "home"
+                            }) {
+                                Text(androidx.compose.ui.res.stringResource(R.string.exit))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showExitConfirmation = false }) {
+                                Text(androidx.compose.ui.res.stringResource(R.string.cancel))
+                            }
+                        }
+                    )
                 }
 
                 // Dialog del tutorial step-by-step
@@ -210,11 +251,6 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onBack = { screen = "home" }
                             )
-                        }
-
-                        "login" -> {
-                            // Schermata rimossa - reindirizzamento alla home
-                            LaunchedEffect(Unit) { screen = "home" }
                         }
 
                         "editor" -> {
@@ -355,7 +391,7 @@ class MainActivity : ComponentActivity() {
         try {
             val file = quizRepository.getDatabaseFile()
             if (!file.exists()) {
-                Toast.makeText(this, "Il database non esiste ancora", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.db_not_exists), Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -371,9 +407,9 @@ class MainActivity : ComponentActivity() {
                 clipData = android.content.ClipData.newRawUri(null, uri)
                 addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
-            startActivity(android.content.Intent.createChooser(intent, "Esporta Database"))
+            startActivity(android.content.Intent.createChooser(intent, getString(R.string.export_database)))
         } catch (e: Exception) {
-            Toast.makeText(this, "Errore durante l'esportazione: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.share_error, e.message ?: ""), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -384,7 +420,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             val modified = quizRepository.getModifiedQuestions()
             if (modified.isEmpty()) {
-                Toast.makeText(this@MainActivity, "Nessuna modifica da esportare", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, getString(R.string.no_modifications), Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
@@ -397,8 +433,7 @@ class MainActivity : ComponentActivity() {
                 saveJsonLauncher.launch("modified_questions.json")
             } else {
                 // Per Email: usiamo l'Intent di condivisione diretto (più immediato)
-                val bodyText = "Si sottopone alla vostra attenzione una proposta di aggiornamento del database. " +
-                        "Numero di quesiti modificati: ${modified.size}. In allegato il file JSON con i dettagli delle modifiche."
+                val bodyText = getString(R.string.export_proposal_body, modified.size)
                 shareAsFile(modified, bodyText, "overlos.dev@gmail.com")
             }
         }
@@ -408,20 +443,18 @@ class MainActivity : ComponentActivity() {
      * Apre la pagina GitHub con un messaggio formale di istruzioni.
      */
     private fun openGitHubFormal(count: Int) {
-        val bodyText = "Proposta di aggiornamento del database.\n\n" +
-                "Numero di quesiti modificati: $count.\n\n" +
-                "Si prega di allegare il file JSON precedentemente salvato nella memoria del dispositivo."
+        val bodyText = getString(R.string.github_formal_body, count)
         
         val githubUri = "https://github.com/Overlos/QuizSoccorso/issues/new".toUri()
             .buildUpon()
-            .appendQueryParameter("title", "Proposta di aggiornamento database")
+            .appendQueryParameter("title", getString(R.string.export_proposal_subject))
             .appendQueryParameter("body", bodyText)
             .build()
         
         try {
             startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, githubUri))
         } catch (_: Exception) {
-            Toast.makeText(this, "Impossibile aprire il browser", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.browser_error), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -442,7 +475,7 @@ class MainActivity : ComponentActivity() {
                 if (recipient != null) {
                     putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(recipient))
                 }
-                putExtra(android.content.Intent.EXTRA_SUBJECT, "Proposta di aggiornamento database")
+                putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.export_proposal_subject))
                 putExtra(android.content.Intent.EXTRA_TEXT, body)
                 putExtra(android.content.Intent.EXTRA_STREAM, uri)
                 
@@ -451,7 +484,7 @@ class MainActivity : ComponentActivity() {
                 addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            val chooserTitle = if (recipient != null) "Invia tramite Email..." else "Esporta File JSON"
+            val chooserTitle = if (recipient != null) getString(R.string.send_via_email) else getString(R.string.export_json)
             startActivity(android.content.Intent.createChooser(intent, chooserTitle))
         } catch (e: Exception) {
             // Fallback: se l'invio specifico fallisce, proviamo la condivisione generica
@@ -467,9 +500,9 @@ class MainActivity : ComponentActivity() {
                     clipData = android.content.ClipData.newRawUri(null, uri)
                     addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                startActivity(android.content.Intent.createChooser(fallbackIntent, "Condividi file"))
+                startActivity(android.content.Intent.createChooser(fallbackIntent, getString(R.string.share_file)))
             } catch (e2: Exception) {
-                Toast.makeText(this, "Impossibile condividere il file: ${e2.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.share_error, e2.message ?: ""), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -513,8 +546,8 @@ class MainActivity : ComponentActivity() {
      * Invia una segnalazione via email per una specifica domanda.
      */
     private fun sendErrorEmail(question: QuizQuestion) {
-        val subject = "Segnalazione Errore QuizSoccorso - ID ${question.id}"
-        val body = "Segnalazione errore per la domanda ID: ${question.id}\n\n" +
+        val subject = getString(R.string.report_error_title) + " QuizSoccorso - ID ${question.id}"
+        val body = getString(R.string.report_error_message) + " ID: ${question.id}\n\n" +
                 "Testo: ${question.question}\n" +
                 "Categoria: ${question.category}\n\n" +
                 "Descrizione dell'errore:\n"
@@ -540,7 +573,7 @@ class MainActivity : ComponentActivity() {
             try {
                 startActivity(fallbackIntent)
             } catch (__: Exception) {
-                Toast.makeText(this, "Nessuna app email trovata", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.email_not_found), Toast.LENGTH_SHORT).show()
             }
         }
     }

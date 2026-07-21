@@ -23,58 +23,58 @@ fun TutorialDialog(onDismiss: () -> Unit) {
     
     val steps = listOf(
         TutorialStep(
-            "Benvenuto!",
-            "Questa applicazione ti guida nella preparazione per i concorsi SSE e Autisti. Iniziamo esplorando le funzionalità principali.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_1_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_1_desc),
             Icons.Default.Celebration
         ),
         TutorialStep(
-            "Selezione della Sezione",
-            "Scegli qui sotto la tua area di interesse (SSE o Autisti). Noterai le icone Medicina e Auto: l'app si adatterà alla tua scelta.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_2_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_2_desc),
             Icons.Default.MedicalServices
         ),
         TutorialStep(
-            "Modalità Studio",
-            "Ideale per consolidare le conoscenze: riceverai feedback immediato e spiegazioni dettagliate per ogni risposta.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_3_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_3_desc),
             Icons.Default.School
         ),
         TutorialStep(
-            "Quiz SMART",
-            "Il sistema analizza le tue performance e propone i quesiti che richiedono maggior approfondimento.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_4_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_4_desc),
             Icons.Default.Psychology
         ),
         TutorialStep(
-            "Simulazione Esame",
-            "Mettiti alla prova con un timer reale (80s a domanda). La valutazione finale simula i criteri dei concorsi ufficiali.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_5_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_5_desc),
             Icons.Default.Timer
         ),
         TutorialStep(
-            "Statistiche",
-            "Monitora costantemente il tuo Indice di Preparazione per identificare le aree che necessitano di revisione.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_6_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_6_desc),
             Icons.Default.BarChart
         ),
         TutorialStep(
-            "Impostazioni",
-            "Personalizza il tema, abilita la vibrazione o esporta il database.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_7_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_7_desc),
             Icons.Default.Settings
         ),
         TutorialStep(
-            "Segnalazione Errori",
-            "Hai trovato un refuso o un errore in una domanda? Clicca l'icona del bug durante il quiz per segnalarlo via GitHub o Email.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_8_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_8_desc),
             Icons.Default.BugReport
         ),
         TutorialStep(
-            "Database Personalizzato",
-            "Puoi importare nuovi database o modificare quello esistente. Un'icona di avviso (⚠️) in home ti indicherà se stai usando dati non originali.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_9_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_9_desc),
             Icons.Default.Warning
         ),
         TutorialStep(
-            "Area Admin",
-            "Sei un istruttore? Accedi all'Area Admin (in fondo alla Home) per aggiungere, modificare o eliminare domande direttamente dall'app.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_10_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_10_desc),
             Icons.Default.Edit
         ),
         TutorialStep(
-            "Approfondimento",
-            "Per dettagli tecnici sulle logiche di valutazione e l'algoritmo SMART, consulta la 'Guida Logiche App' nelle Impostazioni.",
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_11_title),
+            androidx.compose.ui.res.stringResource(R.string.tutorial_step_11_desc),
             Icons.Default.Info
         )
     )
@@ -88,7 +88,7 @@ fun TutorialDialog(onDismiss: () -> Unit) {
                 Text(text = steps[currentStep].description, textAlign = TextAlign.Center)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "${currentStep + 1} di ${steps.size}",
+                    text = androidx.compose.ui.res.stringResource(R.string.tutorial_progress_format, currentStep + 1, steps.size),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.secondary
                 )
@@ -104,17 +104,17 @@ fun TutorialDialog(onDismiss: () -> Unit) {
                     }
                 }
             ) {
-                Text(if (currentStep < steps.size - 1) "Avanti" else "Ho capito")
+                Text(androidx.compose.ui.res.stringResource(if (currentStep < steps.size - 1) R.string.next else R.string.guide_understood))
             }
         },
         dismissButton = {
             if (currentStep > 0) {
                 TextButton(onClick = { currentStep-- }) {
-                    Text("Indietro")
+                    Text(androidx.compose.ui.res.stringResource(R.string.back))
                 }
             } else {
                 TextButton(onClick = onDismiss) {
-                    Text("Salta")
+                    Text(androidx.compose.ui.res.stringResource(R.string.skip))
                 }
             }
         }

@@ -38,7 +38,7 @@ fun ReviewScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Domande sbagliate (${wrongQuestions.size}/${questions.size})",
+            text = androidx.compose.ui.res.stringResource(R.string.wrong_questions_count, wrongQuestions.size, questions.size),
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -46,13 +46,13 @@ fun ReviewScreen(
 
         if (wrongQuestions.isEmpty()) {
             Text(
-                text = "Nessun errore, ottimo lavoro! 🎉",
+                text = androidx.compose.ui.res.stringResource(R.string.no_errors),
                 style = MaterialTheme.typography.bodyLarge
             )
         } else {
             // Mostriamo una card per ogni errore
             wrongQuestions.forEach { question ->
-                val given = userAnswers[question.id] ?: "Nessuna risposta data"
+                val given = userAnswers[question.id] ?: androidx.compose.ui.res.stringResource(R.string.no_answer_given)
 
                 Card(
                     modifier = Modifier
@@ -77,7 +77,7 @@ fun ReviewScreen(
 
                         // Risposta data dall'utente (in rosso)
                         Text(
-                            text = "La tua risposta: $given",
+                            text = androidx.compose.ui.res.stringResource(R.string.user_answer_format, given),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color(0xFFC62828)
                         )
@@ -86,7 +86,7 @@ fun ReviewScreen(
 
                         // Risposta corretta (in verde)
                         Text(
-                            text = "Risposta corretta: ${question.correct}",
+                            text = androidx.compose.ui.res.stringResource(R.string.correct_answer_format, question.correct),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color(0xFF2E7D32)
                         )
@@ -95,7 +95,7 @@ fun ReviewScreen(
                         if (question.explanation.isNotBlank()) {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "Perché?",
+                                text = androidx.compose.ui.res.stringResource(R.string.why),
                                 style = MaterialTheme.typography.labelLarge
                             )
                             Text(
@@ -108,7 +108,7 @@ fun ReviewScreen(
                         if (question.source.isNotBlank()) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Fonte: ${question.source}",
+                                text = androidx.compose.ui.res.stringResource(R.string.source_label, question.source),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Color.Gray
                             )
@@ -124,7 +124,7 @@ fun ReviewScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = onBack
         ) {
-            Text("Torna al risultato")
+            Text(androidx.compose.ui.res.stringResource(R.string.back_to_result))
         }
     }
 }

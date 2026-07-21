@@ -75,15 +75,16 @@ class QuizViewModel(
         _isDatabaseAltered.value = modified.isNotEmpty()
     }
 
-    fun importDatabase(uri: Uri) {
+    fun importDatabase(uri: Uri, onResult: (Int) -> Unit = {}) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            repository.importDatabase(uri)
+            val reassignedCount = repository.importDatabase(uri)
             val questions = repository.loadQuestions()
             _databaseQuestions.value = questions
             allQuestions = questions
             checkDatabaseAltered()
             _uiState.update { it.copy(isLoading = false) }
+            onResult(reassignedCount)
         }
     }
 
@@ -109,6 +110,8 @@ class QuizViewModel(
         var warning: String? = null
         if (number < chapters.size) {
             warning = "Nota: Hai scelto $number domande ma ci sono ${chapters.size} capitoli. Alcuni capitoli saranno esclusi casualmente."
+        } else if (filtered.size < number) {
+            warning = "Nota: Hai richiesto $number domande ma il pool filtrato ne contiene solo ${filtered.size}. L'esame sarà più breve."
         }
 
         // 1. Un quesito per ogni capitolo (se possibile entro il limite 'number')
@@ -310,30 +313,30 @@ class QuizViewModel(
     fun submitExam() {
         timerJob?.cancel()
 
-        _uiState.update { state ->
-            var score = 0
-            var results = state.sessionResults
+        val stateBefore = _uiState.value
+        var finalScore = 0
+        var finalResults = stateBefore.sessionResults
 
-            allQuestions.forEach { question ->
-                val given = state.userAnswers[question.id]
-                if (given != null) {
-                    val isCorrect = given == question.correct
-                    if (isCorrect) score++
-                    // Aggiorna lo stato in memoria SENZA scrivere su disco ancora
-                    recordAnswer(question, isCorrect, saveToDisk = false)
-                    results += (question.id to isCorrect)
-                }
+        // Eseguiamo la logica side-effect fuori dall'update{}
+        allQuestions.forEach { question ->
+            val given = stateBefore.userAnswers[question.id]
+            if (given != null) {
+                val isCorrect = given == question.correct
+                if (isCorrect) finalScore++
+                recordAnswer(question, isCorrect, saveToDisk = false)
+                finalResults += (question.id to isCorrect)
             }
+        }
 
-            // Scrittura finale su disco di tutte le modifiche accumulate
-            saveStatsToDisk()
+        // Scrittura finale su disco di tutte le modifiche accumulate
+        saveStatsToDisk()
 
+        _uiState.update { state ->
             val timeTaken = (state.totalExamTimeSeconds - state.remainingTimeSeconds).coerceAtLeast(0)
-
             state.copy(
-                score = score,
+                score = finalScore,
                 quizFinished = true,
-                sessionResults = results,
+                sessionResults = finalResults,
                 timeTakenSeconds = timeTaken
             )
         }

@@ -40,10 +40,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Impostazioni") },
+                title = { Text(androidx.compose.ui.res.stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Indietro")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = androidx.compose.ui.res.stringResource(R.string.back))
                     }
                 }
             )
@@ -60,49 +60,49 @@ fun SettingsScreen(
             // Sezione TEMA: Consente di scegliere tra Chiaro, Scuro o Sistema
             Column {
                 Text(
-                    text = "Tema Applicazione",
+                    text = androidx.compose.ui.res.stringResource(R.string.app_theme),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Column(Modifier.selectableGroup()) {
                     ThemeOption(
-                        label = "Sistema (Predefinito)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_system),
                         selected = state.theme == AppTheme.SYSTEM,
                         onClick = { onThemeChanged(AppTheme.SYSTEM) }
                     )
                     ThemeOption(
-                        label = "Chiaro (Semplice)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_light),
                         selected = state.theme == AppTheme.LIGHT,
                         onClick = { onThemeChanged(AppTheme.LIGHT) }
                     )
                     ThemeOption(
-                        label = "Chiaro Lively",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_light_lively),
                         selected = state.theme == AppTheme.LIGHT_LIVELY,
                         onClick = { onThemeChanged(AppTheme.LIGHT_LIVELY) }
                     )
                     ThemeOption(
-                        label = "Scuro (Semplice)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_dark),
                         selected = state.theme == AppTheme.DARK,
                         onClick = { onThemeChanged(AppTheme.DARK) }
                     )
                     ThemeOption(
-                        label = "Scuro Lively",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_dark_lively),
                         selected = state.theme == AppTheme.DARK_LIVELY,
                         onClick = { onThemeChanged(AppTheme.DARK_LIVELY) }
                     )
                     ThemeOption(
-                        label = "Accessibile (Daltonico)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_accessible),
                         selected = state.theme == AppTheme.ACCESSIBLE,
                         onClick = { onThemeChanged(AppTheme.ACCESSIBLE) }
                     )
                     ThemeOption(
-                        label = "OLED (Nero Assoluto)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_oled),
                         selected = state.theme == AppTheme.OLED,
                         onClick = { onThemeChanged(AppTheme.OLED) }
                     )
                     ThemeOption(
-                        label = "Lettura (Seppia)",
+                        label = androidx.compose.ui.res.stringResource(R.string.theme_reading),
                         selected = state.theme == AppTheme.READING,
                         onClick = { onThemeChanged(AppTheme.READING) }
                     )
@@ -114,12 +114,12 @@ fun SettingsScreen(
             // DIMENSIONE TESTO
             Column {
                 Text(
-                    text = "Dimensione Testo (${"%.1f".format(state.fontSizeMultiplier)}x)",
+                    text = androidx.compose.ui.res.stringResource(R.string.font_size_label, state.fontSizeMultiplier),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Trascina per ingrandire o rimpicciolire i testi dell'app.",
+                    text = androidx.compose.ui.res.stringResource(R.string.font_size_desc),
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -144,12 +144,12 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "Feedback Aptico",
+                            text = androidx.compose.ui.res.stringResource(R.string.haptic_feedback),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Vibrazione alla selezione delle risposte",
+                            text = androidx.compose.ui.res.stringResource(R.string.haptic_desc),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -166,12 +166,12 @@ fun SettingsScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Feedback Aptico",
+                            text = androidx.compose.ui.res.stringResource(R.string.haptic_feedback),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Vibrazione alla selezione delle risposte",
+                            text = androidx.compose.ui.res.stringResource(R.string.haptic_desc),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -187,7 +187,7 @@ fun SettingsScreen(
             // DOCUMENTAZIONE: Link alle logiche dell'app e al disclaimer legale
             Column {
                 Text(
-                    text = "Documentazione e Logiche",
+                    text = androidx.compose.ui.res.stringResource(R.string.doc_and_logic),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -197,7 +197,7 @@ fun SettingsScreen(
                     onClick = onShowGuide,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("🧠 Guida Logiche App")
+                    Text(androidx.compose.ui.res.stringResource(R.string.guide_logics))
                 }
                 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -206,7 +206,7 @@ fun SettingsScreen(
                     onClick = onShowDisclaimer,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("⚖ Note Legali")
+                    Text(androidx.compose.ui.res.stringResource(R.string.legal_notes))
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -217,7 +217,7 @@ fun SettingsScreen(
                 ) {
                     Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Privacy Policy")
+                    Text(androidx.compose.ui.res.stringResource(R.string.privacy_policy))
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -228,7 +228,7 @@ fun SettingsScreen(
                 ) {
                     Icon(Icons.Default.Build, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Codice Sorgente (GitHub)")
+                    Text(androidx.compose.ui.res.stringResource(R.string.source_code))
                 }
             }
 
@@ -237,7 +237,7 @@ fun SettingsScreen(
             // DATI E DATABASE: Gestione del database JSON
             Column {
                 Text(
-                    text = "Dati e Database",
+                    text = androidx.compose.ui.res.stringResource(R.string.data_and_db),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -250,7 +250,7 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Importa JSON", style = MaterialTheme.typography.labelSmall)
+                        Text(androidx.compose.ui.res.stringResource(R.string.import_json), style = MaterialTheme.typography.labelSmall)
                     }
                     OutlinedButton(
                         onClick = onExportDatabase,
@@ -258,7 +258,7 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Esporta JSON", style = MaterialTheme.typography.labelSmall)
+                        Text(androidx.compose.ui.res.stringResource(R.string.export_json_btn), style = MaterialTheme.typography.labelSmall)
                     }
                 }
 
@@ -271,7 +271,7 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Esporta GitHub", style = MaterialTheme.typography.labelSmall)
+                        Text(androidx.compose.ui.res.stringResource(R.string.export_github), style = MaterialTheme.typography.labelSmall)
                     }
                     OutlinedButton(
                         onClick = onShareModifications,
@@ -279,12 +279,12 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.Email, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Esporta Email", style = MaterialTheme.typography.labelSmall)
+                        Text(androidx.compose.ui.res.stringResource(R.string.export_email), style = MaterialTheme.typography.labelSmall)
                     }
                 }
 
                 Text(
-                    text = "L'esportazione GitHub o Email include solo le tue modifiche per la revisione.",
+                    text = androidx.compose.ui.res.stringResource(R.string.export_info),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 8.dp)
                 )

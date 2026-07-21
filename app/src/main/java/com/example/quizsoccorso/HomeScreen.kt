@@ -56,14 +56,14 @@ fun HomeScreen(
         }
 
         Text(
-            text = "Quiz Soccorso",
+            text = androidx.compose.ui.res.stringResource(R.string.home_title),
             style = MaterialTheme.typography.headlineLarge
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Preparazione Soccorritore",
+            text = androidx.compose.ui.res.stringResource(R.string.home_subtitle),
             style = MaterialTheme.typography.titleMedium
         )
 
@@ -71,7 +71,7 @@ fun HomeScreen(
 
         // SELETTORE DELLA SEZIONE (SSE, Autisti, Misto)
         Text(
-            text = "Seleziona Sezione di Studio",
+            text = androidx.compose.ui.res.stringResource(R.string.select_section),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )
@@ -120,12 +120,12 @@ fun HomeScreen(
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "📚 Modalità Studio",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_studio_title),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Correzione immediata, spiegazioni e fonti per ogni quesito.",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_studio_desc),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -133,7 +133,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { onModeSelected(QuizMode.STUDIO) }
                 ) {
-                    Text("Inizia Studio")
+                    Text(androidx.compose.ui.res.stringResource(R.string.start_study))
                 }
             }
         }
@@ -147,13 +147,13 @@ fun HomeScreen(
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "🧠 Quiz SMART",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_smart_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Allenati sulle domande che sbagli più spesso grazie all'AI.",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_smart_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
@@ -163,7 +163,7 @@ fun HomeScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                     onClick = { onModeSelected(QuizMode.SMART) }
                 ) {
-                    Text("Avvia SMART")
+                    Text(androidx.compose.ui.res.stringResource(R.string.start_smart))
                 }
             }
         }
@@ -176,12 +176,12 @@ fun HomeScreen(
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "📝 Modalità Esame",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_exam_title),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Simula un esame reale con timer. Risultati solo alla fine.",
+                    text = androidx.compose.ui.res.stringResource(R.string.mode_exam_desc),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -189,7 +189,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { onModeSelected(QuizMode.ESAME) }
                 ) {
-                    Text("Simula Esame")
+                    Text(androidx.compose.ui.res.stringResource(R.string.start_exam))
                 }
             }
         }
@@ -203,7 +203,7 @@ fun HomeScreen(
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text("📊 Statistiche", fontWeight = FontWeight.Bold)
+            Text(androidx.compose.ui.res.stringResource(R.string.stats), fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -227,7 +227,7 @@ fun HomeScreen(
             TextButton(
                 onClick = onEditorClick
             ) {
-                Text("⚙ Editor Domande", style = MaterialTheme.typography.labelSmall)
+                Text(androidx.compose.ui.res.stringResource(R.string.editor), style = MaterialTheme.typography.labelSmall)
             }
         }
     }

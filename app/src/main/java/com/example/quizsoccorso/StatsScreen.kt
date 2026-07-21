@@ -109,7 +109,7 @@ private fun StatsOverview(
     onHome: () -> Unit,
     onResetClick: () -> Unit
 ) {
-    Text(text = "Statistiche Storiche", style = MaterialTheme.typography.headlineMedium)
+    Text(text = androidx.compose.ui.res.stringResource(R.string.stats_history), style = MaterialTheme.typography.headlineMedium)
 
     Spacer(modifier = Modifier.height(20.dp))
 
@@ -142,7 +142,7 @@ private fun StatsOverview(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Il tuo livello attuale",
+                        text = androidx.compose.ui.res.stringResource(R.string.current_level),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -181,7 +181,7 @@ private fun StatsOverview(
                     fontWeight = FontWeight.Black
                 )
                 Text(
-                    text = "/100",
+                    text = androidx.compose.ui.res.stringResource(R.string.score_max_suffix),
                     style = MaterialTheme.typography.titleMedium,
                     color = indicatorColor.copy(alpha = 0.6f),
                     modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
@@ -229,7 +229,7 @@ private fun StatsOverview(
             Icon(Icons.Default.Analytics, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "Domande affrontate: $totalAnswered / $totalQuestions",
+                text = androidx.compose.ui.res.stringResource(R.string.answered_stats, totalAnswered, totalQuestions),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -239,7 +239,7 @@ private fun StatsOverview(
     Spacer(modifier = Modifier.height(16.dp))
 
     if (groupedStats.isEmpty()) {
-        Text(text = "Nessun dato disponibile.", style = MaterialTheme.typography.bodyMedium)
+        Text(text = androidx.compose.ui.res.stringResource(R.string.no_data), style = MaterialTheme.typography.bodyMedium)
     } else {
         groupedStats.forEach { (sectionName, stats) ->
             Text(
@@ -250,7 +250,7 @@ private fun StatsOverview(
             )
 
             stats.forEach { stat ->
-                val tag = stat.tags.firstOrNull() ?: "Senza Tag"
+                val tag = stat.tags.firstOrNull() ?: androidx.compose.ui.res.stringResource(R.string.no_tag)
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -310,20 +310,20 @@ private fun StatsOverview(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Affrontate: ${stat.answeredCount}/${stat.totalCount} — ${precisionLabel(stat.precisionPercent)}",
+                                text = androidx.compose.ui.res.stringResource(R.string.category_stats_format, stat.answeredCount, stat.totalCount, precisionLabel(stat.precisionPercent)),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         } else {
                             Text(
-                                text = "${stat.totalCount} domande • Non ancora affrontato",
+                                text = androidx.compose.ui.res.stringResource(R.string.questions_count_not_attempted, stat.totalCount),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.outline
                             )
                         }
                         
                         Text(
-                            text = "Tag: $tag",
+                            text = androidx.compose.ui.res.stringResource(R.string.tag_format, tag),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
                             modifier = Modifier.padding(top = 4.dp)
@@ -347,7 +347,7 @@ private fun QuestionStatsDetail(
     onBack: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Dettaglio Capitolo ($tagName)", style = MaterialTheme.typography.headlineSmall)
+        Text(text = androidx.compose.ui.res.stringResource(R.string.chapter_detail, tagName), style = MaterialTheme.typography.headlineSmall)
         Text(text = categoryName, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -363,7 +363,7 @@ private fun QuestionStatsDetail(
 
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Torna ai capitoli")
+            Text(androidx.compose.ui.res.stringResource(R.string.back_to_chapters))
         }
     }
 }
@@ -401,7 +401,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
             ) {
                 Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
                     Text(
-                        text = "RISPOSTA ESATTA:",
+                        text = androidx.compose.ui.res.stringResource(R.string.correct_answer_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color(0xFF2E7D32),
                         fontWeight = FontWeight.Black
@@ -418,7 +418,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
             if (question.explanation.isNotBlank()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Spiegazione: ${question.explanation}",
+                    text = androidx.compose.ui.res.stringResource(R.string.explanation_format, question.explanation),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -439,17 +439,17 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                 ) {
                     Column {
                         Text(
-                            text = "Volte affrontata: ${stat.attempts}",
+                            text = androidx.compose.ui.res.stringResource(R.string.attempts_format, stat.attempts),
                             style = MaterialTheme.typography.labelMedium
                         )
                         if (stat.attempts > 0) {
                             Text(
-                                text = "Risposte corrette: ${stat.correct}",
+                                text = androidx.compose.ui.res.stringResource(R.string.correct_format, stat.correct),
                                 style = MaterialTheme.typography.labelSmall
                             )
                             if (stat.userDifficulty > 0) {
                                 Text(
-                                    text = "Difficoltà pers.: ${"%.1f".format(stat.userDifficulty)}/5",
+                                    text = androidx.compose.ui.res.stringResource(R.string.custom_difficulty_format, stat.userDifficulty),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
@@ -460,7 +460,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                     if (precision >= 0) {
                         Column {
                             Text(
-                                text = "Precisione: $precision%",
+                                text = androidx.compose.ui.res.stringResource(R.string.precision_format, precision),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = when {
                                     precision < 85 -> Color(0xFFC62828)
@@ -478,7 +478,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                         }
                     } else {
                         Text(
-                            text = "MAI AFFRONTATA",
+                            text = androidx.compose.ui.res.stringResource(R.string.never_attempted),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
@@ -493,17 +493,17 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                 ) {
                     Column {
                         Text(
-                            text = "Volte affrontata: ${stat.attempts}",
+                            text = androidx.compose.ui.res.stringResource(R.string.attempts_format, stat.attempts),
                             style = MaterialTheme.typography.labelMedium
                         )
                         if (stat.attempts > 0) {
                             Text(
-                                text = "Risposte corrette: ${stat.correct}",
+                                text = androidx.compose.ui.res.stringResource(R.string.correct_format, stat.correct),
                                 style = MaterialTheme.typography.labelSmall
                             )
                             if (stat.userDifficulty > 0) {
                                 Text(
-                                    text = "Difficoltà pers.: ${"%.1f".format(stat.userDifficulty)}/5",
+                                    text = androidx.compose.ui.res.stringResource(R.string.custom_difficulty_format, stat.userDifficulty),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.secondary
                                 )
@@ -514,7 +514,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                     if (precision >= 0) {
                         Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
                             Text(
-                                text = "Precisione: $precision%",
+                                text = androidx.compose.ui.res.stringResource(R.string.precision_format, precision),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = when {
                                     precision < 85 -> Color(0xFFC62828)
@@ -532,7 +532,7 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
                         }
                     } else {
                         Text(
-                            text = "MAI AFFRONTATA",
+                            text = androidx.compose.ui.res.stringResource(R.string.never_attempted),
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.Gray,
                             fontWeight = FontWeight.Bold
@@ -547,9 +547,9 @@ private fun QuestionStatCard(question: QuizQuestion, stat: QuestionStat) {
 @Composable
 private fun StatsFooterButtons(onBack: () -> Unit, onResetClick: () -> Unit, onHome: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onBack) { Text("⬅ Indietro") }
-        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onResetClick) { Text("🗑 Resetta statistiche") }
-        Button(modifier = Modifier.fillMaxWidth(), onClick = onHome) { Text("🏠 Home") }
+        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onBack) { Text(androidx.compose.ui.res.stringResource(R.string.back_arrow)) }
+        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = onResetClick) { Text(androidx.compose.ui.res.stringResource(R.string.reset_stats)) }
+        Button(modifier = Modifier.fillMaxWidth(), onClick = onHome) { Text(androidx.compose.ui.res.stringResource(R.string.home_btn)) }
     }
 }
 
@@ -557,9 +557,9 @@ private fun StatsFooterButtons(onBack: () -> Unit, onResetClick: () -> Unit, onH
 private fun ResetConfirmDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Resetta statistiche") },
-        text = { Text("Vuoi davvero cancellare tutte le statistiche di precisione accumulate finora? L'operazione non è reversibile.") },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Resetta") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annulla") } }
+        title = { Text(androidx.compose.ui.res.stringResource(R.string.reset_stats)) },
+        text = { Text(androidx.compose.ui.res.stringResource(R.string.reset_stats_message)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(androidx.compose.ui.res.stringResource(R.string.reset)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(androidx.compose.ui.res.stringResource(R.string.cancel)) } }
     )
 }

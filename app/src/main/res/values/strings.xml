@@ -1,3 +1,256 @@
 <resources>
     <string name="app_name">QuizSoccorso</string>
+
+    <!-- MainActivity -->
+    <string name="error_saving_file">Errore durante il salvataggio del file</string>
+    <string name="db_imported_reassigned">Database importato: %1$d ID riassegnati per evitare conflitti.</string>
+    <string name="db_imported_success">Database importato con successo.</string>
+    <string name="report_error_title">Segnala Errore</string>
+    <string name="report_error_message">Come vuoi segnalare l\'errore per questa domanda?</string>
+    <string name="github">GitHub</string>
+    <string name="email">Email</string>
+    <string name="exit_quiz_title">Abbandona Quiz</string>
+    <string name="exit_quiz_message">Sei sicuro di voler uscire? I progressi di questa sessione andranno persi.</string>
+    <string name="exit">Esci</string>
+    <string name="cancel">Annulla</string>
+    <string name="db_not_exists">Il database non esiste ancora</string>
+    <string name="export_database">Esporta Database</string>
+    <string name="no_modifications">Nessuna modifica da esportare</string>
+    <string name="export_proposal_subject">Proposta di aggiornamento database</string>
+    <string name="export_proposal_body">Si sottopone alla vostra attenzione una proposta di aggiornamento del database. Numero di quesiti modificati: %1$d. In allegato il file JSON con i dettagli delle modifiche.</string>
+    <string name="github_formal_body">Proposta di aggiornamento del database.\n\nNumero di quesiti modificati: %1$d.\n\nSi prega di allegare il file JSON precedentemente salvato nella memoria del dispositivo.</string>
+    <string name="browser_error">Impossibile aprire il browser</string>
+    <string name="export_json">Esporta File JSON</string>
+    <string name="send_via_email">Invia tramite Email…</string>
+    <string name="share_file">Condividi file</string>
+    <string name="share_error">Impossibile condividere il file: %1$s</string>
+    <string name="email_not_found">Nessuna app email trovata</string>
+
+    <!-- HomeScreen -->
+    <string name="home_title">Quiz Soccorso</string>
+    <string name="home_subtitle">Preparazione Soccorritore</string>
+    <string name="select_section">Seleziona Sezione di Studio</string>
+    <string name="mode_studio_title">📚 Modalità Studio</string>
+    <string name="mode_studio_desc">Correzione immediata, spiegazioni e fonti per ogni quesito.</string>
+    <string name="start_study">Inizia Studio</string>
+    <string name="mode_smart_title">🧠 Quiz SMART</string>
+    <string name="mode_smart_desc">Allenati sulle domande che sbagli più spesso grazie all\'AI.</string>
+    <string name="start_smart">Avvia SMART</string>
+    <string name="mode_exam_title">📝 Modalità Esame</string>
+    <string name="mode_exam_desc">Simula un esame reale con timer. Risultati solo alla fine.</string>
+    <string name="start_exam">Simula Esame</string>
+    <string name="stats">📊 Statistiche</string>
+    <string name="editor">⚙ Editor Domande</string>
+
+    <!-- QuizScreen -->
+    <string name="confirm">Conferma</string>
+    <string name="submit_answers">Inoltra risposte</string>
+    <string name="next">Avanti</string>
+    <string name="next_question">Prossima domanda</string>
+    <string name="explanation_label">Spiegazione:</string>
+    <string name="source_label">Fonte: %1$s</string>
+    <string name="timer_label">Tempo rimanente: %1$02d:%2$02d</string>
+    <string name="category_label">Categoria: %1$s</string>
+    <string name="difficulty_label">Difficoltà: %1$d/5</string>
+    <string name="tag_label">Tag: %1$s</string>
+    <string name="already_answered">🔁 Hai già risposto in precedenza</string>
+    <string name="attention">Attenzione</string>
+    <string name="submit_confirm_message">Hai ancora %1$d domande senza risposta.\n\nVuoi consegnare comunque?</string>
+    <string name="submit">Consegna</string>
+
+    <!-- SettingsScreen -->
+    <string name="settings">Impostazioni</string>
+    <string name="back">Indietro</string>
+    <string name="app_theme">Tema Applicazione</string>
+    <string name="theme_system">Sistema (Predefinito)</string>
+    <string name="theme_light">Chiaro (Semplice)</string>
+    <string name="theme_light_lively">Chiaro Lively</string>
+    <string name="theme_dark">Scuro (Semplice)</string>
+    <string name="theme_dark_lively">Scuro Lively</string>
+    <string name="theme_accessible">Accessibile (Daltonico)</string>
+    <string name="theme_oled">OLED (Nero Assoluto)</string>
+    <string name="theme_reading">Lettura (Seppia)</string>
+    <string name="font_size_label">Dimensione Testo (%1$.1fx)</string>
+    <string name="font_size_desc">Trascina per ingrandire o rimpicciolire i testi dell\'app.</string>
+    <string name="haptic_feedback">Feedback Aptico</string>
+    <string name="haptic_desc">Vibrazione alla selezione delle risposte</string>
+    <string name="doc_and_logic">Documentazione e Logiche</string>
+    <string name="guide_logics">🧠 Guida Logiche App</string>
+    <string name="legal_notes">⚖ Note Legali</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="source_code">Codice Sorgente (GitHub)</string>
+    <string name="data_and_db">Dati e Database</string>
+    <string name="import_json">Importa JSON</string>
+    <string name="export_json_btn">Esporta JSON</string>
+    <string name="export_github">Esporta GitHub</string>
+    <string name="export_email">Esporta Email</string>
+    <string name="export_info">L\'esportazione GitHub o Email include solo le tue modifiche per la revisione.</string>
+
+    <!-- StatsScreen -->
+    <string name="stats_history">Statistiche Storiche</string>
+    <string name="current_level">Il tuo livello attuale</string>
+    <string name="answered_stats">Domande affrontate: %1$d / %2$d</string>
+    <string name="no_data">Nessun dato disponibile.</string>
+    <string name="category_stats_format">Affrontate: %1$d/%2$d — %3$s</string>
+    <string name="questions_count_not_attempted">%1$d domande • Non ancora affrontato</string>
+    <string name="tag_format">Tag: %1$s</string>
+    <string name="chapter_detail">Dettaglio Capitolo (%1$s)</string>
+    <string name="back_to_chapters">Torna ai capitoli</string>
+    <string name="correct_answer_label">RISPOSTA ESATTA:</string>
+    <string name="explanation_format">Spiegazione: %1$s</string>
+    <string name="attempts_format">Volte affrontata: %1$d</string>
+    <string name="correct_format">Risposte corrette: %1$d</string>
+    <string name="custom_difficulty_format">Difficoltà pers.: %1$.1f/5</string>
+    <string name="precision_format">Precisione: %1$d%%</string>
+    <string name="never_attempted">MAI AFFRONTATA</string>
+    <string name="back_arrow">⬅ Indietro</string>
+    <string name="reset_stats">🗑 Resetta statistiche</string>
+    <string name="home_btn">🏠 Home</string>
+    <string name="reset_stats_message">Vuoi davvero cancellare tutte le statistiche di precisione accumulate finora? L\'operazione non è reversibile.</string>
+    <string name="reset">Resetta</string>
+
+    <!-- AdminScreens -->
+    <string name="admin_disclaimer_title">Esclusione di Responsabilità</string>
+    <string name="admin_disclaimer_message">L\'accesso all\'area amministrativa permette di modificare, aggiungere o eliminare domande dal database locale.\n\nQualsiasi modifica apportata è sotto la tua esclusiva responsabilità. L\'integrità e l\'accuratezza dei contenuti originali non sono più garantite una volta che il database viene alterato.\n\nSi consiglia di esportare un backup prima di procedere.</string>
+    <string name="admin_disclaimer_confirm">Ho capito e accetto</string>
+    <string name="editor_title">Editor Domande</string>
+    <string name="search_format">Ricerca: %1$s</string>
+    <string name="add">Aggiungi</string>
+    <string name="search_placeholder">Cerca per testo, capitolo o tag…</string>
+    <string name="clear">Cancella</string>
+    <string name="results_found">Risultati trovati: %1$d</string>
+    <string name="select_tag">Seleziona un Tag</string>
+    <string name="chapters_in_tag">Capitoli in: %1$s</string>
+    <string name="questions_in_category">Domande: %1$s</string>
+    <string name="delete_confirm_title">Conferma eliminazione</string>
+    <string name="delete_confirm_message">Sei sicuro di voler eliminare questa domanda definitivamente?</string>
+    <string name="delete">Elimina</string>
+    <string name="edit">Modifica</string>
+    <string name="question_id_difficulty">ID: %1$d | Difficoltà: %2$d/5</string>
+    <string name="new_question">Nuova Domanda</string>
+    <string name="edit_question">Modifica Domanda</string>
+    <string name="question_required">Domanda (Obbligatoria)</string>
+    <string name="chapter_required">Capitolo (Obbligatorio)</string>
+    <string name="tags_required">Tag (es: SSE, Autisti – Obbligatorio)</string>
+    <string name="difficulty_range">Difficoltà (1–5)</string>
+    <string name="answers_selection">Risposte (Scegli la corretta):</string>
+    <string name="answer_index">Risposta %1$d</string>
+    <string name="select_correct_error">Seleziona una risposta corretta!</string>
+    <string name="duplicate_answers_error">Sono presenti risposte duplicate (insensibile a maiuscole/spazi)!</string>
+    <string name="explanation">Spiegazione</string>
+    <string name="source">Fonte</string>
+    <string name="save">Salva</string>
+
+    <!-- ResultScreen -->
+    <string name="quiz_finished">Quiz terminato</string>
+    <string name="score_format">%1$d / %2$d</string>
+    <string name="exam_passed">✅ ESAME SUPERATO</string>
+    <string name="exam_failed">❌ ESAME NON SUPERATO</string>
+    <string name="min_threshold">Soglia minima: %1$d/%2$d risposte corrette</string>
+    <string name="time_taken_format">Tempo impiegato: %1$02d:%2$02d</string>
+    <string name="chapter_summary">Riepilogo per capitolo</string>
+    <string name="category_summary_format">%1$s: %2$d/%3$d (%4$d%%)</string>
+    <string name="view_errors">Vedi errori</string>
+    <string name="restart">Ricomincia</string>
+
+    <!-- ReviewScreen -->
+    <string name="wrong_questions_count">Domande sbagliate (%1$d/%2$d)</string>
+    <string name="no_errors">Nessun errore, ottimo lavoro! 🎉</string>
+    <string name="user_answer_format">La tua risposta: %1$s</string>
+    <string name="correct_answer_format">Risposta corretta: %1$s</string>
+    <string name="why">Perché?</string>
+    <string name="back_to_result">Torna al risultato</string>
+
+    <!-- StudyScreen -->
+    <string name="study_mode">Modalità Studio</string>
+    <string name="section_format">Sezione: %1$s</string>
+    <string name="all_questions">Tutte le domande</string>
+    <string name="choose_chapter">Scegli capitolo</string>
+    <string name="no_questions_available">Nessuna domanda disponibile per questa sezione.</string>
+    <string name="precision_study_format">Precisione: %1$d%% (%2$d/%3$d) — %4$s</string>
+    <string name="questions_count_not_attempted_study">%1$d domande — non ancora affrontato</string>
+    <string name="score_max_suffix">/100</string>
+    <string name="no_tag">Senza Tag</string>
+    <string name="no_answer_given">Nessuna risposta data</string>
+    <!-- AppLogicGuideScreen -->
+    <string name="guide_title">Logiche e Funzionamento</string>
+    <string name="guide_alg_smart_title">🧠 Algoritmo Quiz SMART</string>
+    <string name="guide_alg_smart_content">
+        La modalità SMART utilizza un algoritmo di priorità per selezionare i quesiti più utili per il tuo percorso di apprendimento.\n\n
+        Viene assegnato un punteggio a ogni domanda basato su:\n
+        1. **Precisione Storica**: Le lacune conoscitive identificate aumentano la priorità.\n
+        2. **Difficoltà Soggettiva**: I quesiti che hai valutato come complessi compaiono con maggiore frequenza.\n
+        3. **Spaced Repetition (Ripetizione Dilazionata)**: Quando rispondi correttamente a un quesito in modo costante, l\'app dilata i tempi prima di riproporlo, favorendo la memoria a lungo termine.
+    </string>
+    <string name="guide_prep_index_title">📊 Indice di Preparazione</string>
+    <string name="guide_prep_index_content">
+        L\'indice globale (0-100) non è una semplice media, ma una valutazione ponderata della tua competenza:\n\n
+        - **Precisione (40%)**: La percentuale complessiva di risposte corrette.\n
+        - **Recenza (30%)**: Le performance degli ultimi 7 giorni riflettono lo stato attuale della tua preparazione.\n
+        - **Padronanza (20%)**: Indica la quota di quesiti a cui hai fornito una risposta corretta in almeno 3 occasioni consecutive.\n
+        - **Consistenza (10%)**: Valuta l\'uniformità dello studio tra i diversi capitoli disponibili.
+    </string>
+    <string name="guide_thresholds_title">🎯 Soglie di Valutazione</string>
+    <string name="guide_thresholds_content">
+        Per garantirti una preparazione d\'eccellenza, abbiamo definito soglie di merito rigorose:\n\n
+        - **Ottimo (>= 95%)**: Dimostrazione di padronanza quasi totale della materia.\n
+        - **Buono (>= 90%)**: Conoscenza solida e affidabile.\n
+        - **Sufficiente (>= 85%)**: Requisito minimo per considerarsi pronti all\'esame.\n
+        - **Da ripassare (&lt; 85%)**: Segnala la necessità di approfondire ulteriormente gli argomenti.
+    </string>
+    <string name="guide_dynamic_diff_title">📈 Difficoltà Dinamica</string>
+    <string name="guide_dynamic_diff_content">
+        L\'applicazione monitora costantemente le tue risposte. In caso di errore, la domanda viene considerata più critica per il tuo studio. Al contrario, quando dimostri padronanza della risposta, l\'algoritmo ne riduce la priorità.
+    </string>
+    <string name="guide_understood">Ho capito</string>
+
+    <!-- DisclaimerDialog -->
+    <string name="disclaimer_title_full">Disclaimer Legale</string>
+    <string name="disclaimer_content">
+        # Disclaimer\n\n
+        La presente applicazione è stata sviluppata esclusivamente come **strumento di supporto allo studio e al ripasso personale**. Non costituisce in alcun modo un programma didattico ufficiale, né sostituisce la formazione teorica e pratica prevista dai corsi per soccorritori.\n\n
+        I contenuti dell\'app sono forniti a solo scopo educativo e potrebbero contenere errori, omissioni o informazioni non aggiornate. Pur essendo stata prestata la massima attenzione nella loro preparazione, **non è possibile garantirne la completezza, l\'accuratezza o la conformità alle più recenti linee guida e procedure operative**.\n\n
+        L\'utilizzo dell\'app **non costituisce consulenza medica, sanitaria o professionale** e non deve essere impiegato per assumere decisioni cliniche, assistenziali o operative durante interventi di soccorso.\n\n
+        Le indicazioni fornite da **istruttori, formatori, responsabili della formazione, protocolli ufficiali, linee guida vigenti e documentazione dell\'ente di appartenenza prevalgono sempre** sui contenuti presenti nell\'applicazione.\n\n
+        L\'autore non è affiliato, autorizzato o rappresenta alcun ente di formazione, organizzazione di soccorso o istituzione sanitaria, salvo diversa ed esplicita indicazione.\n\n
+        L\'utente è l\'unico responsabile della verifica delle informazioni e del proprio percorso formativo. L\'utilizzo dell\'app implica l\'accettazione che essa rappresenta esclusivamente un **coadiuvante allo studio**, senza alcuna garanzia di superamento dell\'esame o di idoneità professionale.\n\n
+        L\'autore declina ogni responsabilità per eventuali danni, diretti o indiretti, derivanti dall\'utilizzo dell\'applicazione o dall\'affidamento ai suoi contenuti.
+    </string>
+    <string name="disclaimer_accept">Ho letto e accetto le condizioni</string>
+    <string name="close">Chiudi</string>
+
+    <!-- TutorialDialog -->
+    <string name="tutorial_step_1_title">Benvenuto!</string>
+    <string name="tutorial_step_1_desc">Questa applicazione ti guida nella preparazione per i concorsi SSE e Autisti. Iniziamo esplorando le funzionalità principali.</string>
+    <string name="tutorial_step_2_title">Selezione della Sezione</string>
+    <string name="tutorial_step_2_desc">Scegli qui sotto la tua area di interesse (SSE o Autisti). Noterai le icone Medicina e Auto: l\'app si adatterà alla tua scelta.</string>
+    <string name="tutorial_step_3_title">Modalità Studio</string>
+    <string name="tutorial_step_3_desc">Ideale per consolidare le conoscenze: riceverai feedback immediato e spiegazioni dettagliate per ogni risposta.</string>
+    <string name="tutorial_step_4_title">Quiz SMART</string>
+    <string name="tutorial_step_4_desc">Il sistema analizza le tue performance e propone i quesiti che richiedono maggior approfondimento.</string>
+    <string name="tutorial_step_5_title">Simulazione Esame</string>
+    <string name="tutorial_step_5_desc">Mettiti alla prova con un timer reale (80s a domanda). La valutazione finale simula i criteri dei concorsi ufficiali.</string>
+    <string name="tutorial_step_6_title">Statistiche</string>
+    <string name="tutorial_step_6_desc">Monitora costantemente il tuo Indice di Preparazione per identificare le aree che necessitano di revisione.</string>
+    <string name="tutorial_step_7_title">Impostazioni</string>
+    <string name="tutorial_step_7_desc">Personalizza il tema, abilita la vibrazione o esporta il database.</string>
+    <string name="tutorial_step_8_title">Segnalazione Errori</string>
+    <string name="tutorial_step_8_desc">Hai trovato un refuso o un errore in una domanda? Clicca l\'icona del bug durante il quiz per segnalarlo via GitHub o Email.</string>
+    <string name="tutorial_step_9_title">Database Personalizzato</string>
+    <string name="tutorial_step_9_desc">Puoi importare nuovi database o modificare quello esistente. Un\'icona di avviso (⚠️) in home ti indicherà se stai usando dati non originali.</string>
+    <string name="tutorial_step_10_title">Area Admin</string>
+    <string name="tutorial_step_10_desc">Sei un istruttore? Accedi all\'Area Admin (in fondo alla Home) per aggiungere, modificare o eliminare domande direttamente dall\'app.</string>
+    <string name="tutorial_step_11_title">Approfondimento</string>
+    <string name="tutorial_step_11_desc">Per dettagli tecnici sulle logiche di valutazione e l\'algoritmo SMART, consulta la \'Guida Logiche App\' nelle Impostazioni.</string>
+    <string name="tutorial_progress_format">%1$d di %2$d</string>
+    <string name="skip">Salta</string>
+    <!-- QuizConfigScreens -->
+    <string name="config_exam">Configura Esame</string>
+    <string name="config_exam_desc">Il tempo e la soglia di sbarramento verranno calcolati proporzionalmente in base al numero di domande scelto.</string>
+    <string name="num_questions">Numero di domande:</string>
+    <string name="official_suffix">%1$d (Ufficiale ⭐)</string>
+    <string name="start_exam_btn">Inizia Esame</string>
+    <string name="study_misto_desc">Quante domande vuoi affrontare in questa sessione di studio misto?</string>
+    <string name="num_questions_format">%1$d domande</string>
+    <string name="all_questions_full">Tutte le domande (Full)</string>
 </resources>

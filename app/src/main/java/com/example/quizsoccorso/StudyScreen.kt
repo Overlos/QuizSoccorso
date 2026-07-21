@@ -48,7 +48,7 @@ fun StudyScreen(
 
         Text(
 
-            text = "Modalità Studio"
+            text = androidx.compose.ui.res.stringResource(R.string.study_mode)
 
         )
 
@@ -56,7 +56,7 @@ fun StudyScreen(
 
             Text(
 
-                text = "Sezione: $sectionLabel",
+                text = androidx.compose.ui.res.stringResource(R.string.section_format, sectionLabel),
 
                 style = MaterialTheme.typography.labelMedium
 
@@ -77,7 +77,7 @@ fun StudyScreen(
 
         ) {
 
-            Text("Tutte le domande")
+            Text(androidx.compose.ui.res.stringResource(R.string.all_questions))
 
         }
 
@@ -91,14 +91,14 @@ fun StudyScreen(
 
         Text(
 
-            text = "Scegli capitolo"
+            text = androidx.compose.ui.res.stringResource(R.string.choose_chapter)
 
         )
 
         if (categoryStats.isEmpty()) {
 
             Text(
-                text = "Nessuna domanda disponibile per questa sezione.",
+                text = androidx.compose.ui.res.stringResource(R.string.no_questions_available),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -131,16 +131,14 @@ fun StudyScreen(
                     if (stat.precisionPercent >= 0) {
 
                         Text(
-                            text = "Precisione: ${stat.precisionPercent}% " +
-                                    "(${stat.answeredCount}/${stat.totalCount}) " +
-                                    "— ${precisionLabel(stat.precisionPercent)}",
+                            text = androidx.compose.ui.res.stringResource(R.string.precision_study_format, stat.precisionPercent, stat.answeredCount, stat.totalCount, precisionLabel(stat.precisionPercent)),
                             style = MaterialTheme.typography.labelSmall
                         )
 
                     } else {
 
                         Text(
-                            text = "${stat.totalCount} domande — non ancora affrontato",
+                            text = androidx.compose.ui.res.stringResource(R.string.questions_count_not_attempted_study, stat.totalCount),
                             style = MaterialTheme.typography.labelSmall
                         )
 

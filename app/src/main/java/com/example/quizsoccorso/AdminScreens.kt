@@ -32,23 +32,18 @@ fun AdminDisclaimerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Esclusione di Responsabilità") },
+        title = { Text(androidx.compose.ui.res.stringResource(R.string.admin_disclaimer_title)) },
         text = {
-            Text(
-                "L'accesso all'area amministrativa permette di modificare, aggiungere o eliminare domande dal database locale.\n\n" +
-                "Qualsiasi modifica apportata è sotto la tua esclusiva responsabilità. " +
-                "L'integrità e l'accuratezza dei contenuti originali non sono più garantite una volta che il database viene alterato.\n\n" +
-                "Si consiglia di esportare un backup prima di procedere."
-            )
+            Text(androidx.compose.ui.res.stringResource(R.string.admin_disclaimer_message))
         },
         confirmButton = {
             Button(onClick = onConfirm) {
-                Text("Ho capito e accetto")
+                Text(androidx.compose.ui.res.stringResource(R.string.admin_disclaimer_confirm))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Annulla")
+                Text(androidx.compose.ui.res.stringResource(R.string.cancel))
             }
         }
     )
@@ -125,7 +120,7 @@ fun QuestionEditorScreen(
                 title = { 
                     Column {
                         Text(
-                            text = "Editor Domande", 
+                            text = androidx.compose.ui.res.stringResource(R.string.editor_title), 
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -139,7 +134,7 @@ fun QuestionEditorScreen(
                             )
                         } else if (searchQuery.isNotEmpty()) {
                             Text(
-                                text = "Ricerca: $searchQuery",
+                                text = androidx.compose.ui.res.stringResource(R.string.search_format, searchQuery),
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -154,7 +149,7 @@ fun QuestionEditorScreen(
                         else if (selectedTag != null) selectedTag = null
                         else onBack()
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Indietro")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = androidx.compose.ui.res.stringResource(R.string.back))
                     }
                 },
                 actions = {
@@ -171,7 +166,7 @@ fun QuestionEditorScreen(
                             source = ""
                         )
                     }) {
-                        Icon(Icons.Default.Add, contentDescription = "Aggiungi")
+                        Icon(Icons.Default.Add, contentDescription = androidx.compose.ui.res.stringResource(R.string.add))
                     }
                 }
             )
@@ -186,12 +181,12 @@ fun QuestionEditorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text("Cerca per testo, capitolo o tag...") },
+                placeholder = { Text(androidx.compose.ui.res.stringResource(R.string.search_placeholder)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
                         IconButton(onClick = { searchQuery = "" }) {
-                            Icon(Icons.Default.Close, contentDescription = "Cancella")
+                            Icon(Icons.Default.Close, contentDescription = androidx.compose.ui.res.stringResource(R.string.clear))
                         }
                     }
                 },
@@ -208,7 +203,7 @@ fun QuestionEditorScreen(
                 ) {
                     item {
                         Text(
-                            text = "Risultati trovati: ${filteredBySearch.size}",
+                            text = androidx.compose.ui.res.stringResource(R.string.results_found, filteredBySearch.size),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.secondary
                         )
@@ -229,7 +224,7 @@ fun QuestionEditorScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        Text("Seleziona un Tag", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(androidx.compose.ui.res.stringResource(R.string.select_tag), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
                     }
                     items(questionsByTag.keys.toList()) { tag ->
                         val count = questionsByTag[tag]?.size ?: 0
@@ -253,7 +248,7 @@ fun QuestionEditorScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
-                        Text("Capitoli in: $selectedTag", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(androidx.compose.ui.res.stringResource(R.string.chapters_in_tag, selectedTag!!), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
                     }
                     items(categoriesInSelectedTag) { category ->
                         val count = questionsByTag[selectedTag]?.count { it.category == category } ?: 0
@@ -276,7 +271,7 @@ fun QuestionEditorScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     item {
-                        Text("Domande: $selectedCategory", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(androidx.compose.ui.res.stringResource(R.string.questions_in_category, selectedCategory!!), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 8.dp))
                     }
                     items(filteredQuestions) { question ->
                         QuestionListItem(
@@ -304,18 +299,18 @@ fun QuestionEditorScreen(
     showDeleteConfirm?.let { id ->
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = null },
-            title = { Text("Conferma eliminazione") },
-            text = { Text("Sei sicuro di voler eliminare questa domanda definitivamente?") },
+            title = { Text(androidx.compose.ui.res.stringResource(R.string.delete_confirm_title)) },
+            text = { Text(androidx.compose.ui.res.stringResource(R.string.delete_confirm_message)) },
             confirmButton = {
                 TextButton(onClick = {
                     onDeleteQuestion(id)
                     showDeleteConfirm = null
                 }, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) { 
-                    Text("Elimina") 
+                    Text(androidx.compose.ui.res.stringResource(R.string.delete)) 
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = null }) { Text("Annulla") }
+                TextButton(onClick = { showDeleteConfirm = null }) { Text(androidx.compose.ui.res.stringResource(R.string.cancel)) }
             }
         )
     }
@@ -349,10 +344,10 @@ fun QuestionListItem(
                         horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(onClick = onEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Modifica", tint = MaterialTheme.colorScheme.secondary)
+                            Icon(Icons.Default.Edit, contentDescription = androidx.compose.ui.res.stringResource(R.string.edit), tint = MaterialTheme.colorScheme.secondary)
                         }
                         IconButton(onClick = onDelete) {
-                            Icon(Icons.Default.Delete, contentDescription = "Elimina", tint = MaterialTheme.colorScheme.error)
+                            Icon(Icons.Default.Delete, contentDescription = androidx.compose.ui.res.stringResource(R.string.delete), tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -369,10 +364,10 @@ fun QuestionListItem(
                     }
                     Row {
                         IconButton(onClick = onEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Modifica", tint = MaterialTheme.colorScheme.secondary)
+                            Icon(Icons.Default.Edit, contentDescription = androidx.compose.ui.res.stringResource(R.string.edit), tint = MaterialTheme.colorScheme.secondary)
                         }
                         IconButton(onClick = onDelete) {
-                            Icon(Icons.Default.Delete, contentDescription = "Elimina", tint = MaterialTheme.colorScheme.error)
+                            Icon(Icons.Default.Delete, contentDescription = androidx.compose.ui.res.stringResource(R.string.delete), tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -380,7 +375,7 @@ fun QuestionListItem(
             
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "ID: ${question.id} | Difficoltà: ${question.difficulty}/5",
+                text = androidx.compose.ui.res.stringResource(R.string.question_id_difficulty, question.id, question.difficulty),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.Gray
             )
@@ -410,15 +405,21 @@ fun EditQuestionDialog(
     var difficulty by remember { mutableStateOf(question.difficulty.toString()) }
 
     // Validazione
+    val hasDuplicateAnswers = remember(answers) {
+        val trimmed = answers.map { it.trim().lowercase() }.filter { it.isNotEmpty() }
+        trimmed.size != trimmed.distinct().size
+    }
+
     val isFormValid = text.isNotBlank() && 
                       category.isNotBlank() && 
                       answers.all { it.isNotBlank() } && 
+                      !hasDuplicateAnswers &&
                       selectedCorrectIndex != -1 && 
                       tagsStr.isNotBlank()
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (question.id == 0) "Nuova Domanda" else "Modifica Domanda") },
+        title = { Text(androidx.compose.ui.res.stringResource(if (question.id == 0) R.string.new_question else R.string.edit_question)) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -427,7 +428,7 @@ fun EditQuestionDialog(
                 OutlinedTextField(
                     value = text, 
                     onValueChange = { text = it }, 
-                    label = { Text("Domanda (Obbligatoria)") }, 
+                    label = { Text(androidx.compose.ui.res.stringResource(R.string.question_required)) }, 
                     modifier = Modifier.fillMaxWidth(),
                     isError = text.isBlank()
                 )
@@ -435,7 +436,7 @@ fun EditQuestionDialog(
                 OutlinedTextField(
                     value = category, 
                     onValueChange = { category = it }, 
-                    label = { Text("Capitolo (Obbligatorio)") }, 
+                    label = { Text(androidx.compose.ui.res.stringResource(R.string.chapter_required)) }, 
                     modifier = Modifier.fillMaxWidth(),
                     isError = category.isBlank()
                 )
@@ -443,7 +444,7 @@ fun EditQuestionDialog(
                 OutlinedTextField(
                     value = tagsStr, 
                     onValueChange = { tagsStr = it }, 
-                    label = { Text("Tag (es: SSE, Autisti - Obbligatorio)") }, 
+                    label = { Text(androidx.compose.ui.res.stringResource(R.string.tags_required)) }, 
                     modifier = Modifier.fillMaxWidth(),
                     isError = tagsStr.isBlank()
                 )
@@ -451,13 +452,13 @@ fun EditQuestionDialog(
                 OutlinedTextField(
                     value = difficulty, 
                     onValueChange = { difficulty = it }, 
-                    label = { Text("Difficoltà (1-5)") }, 
+                    label = { Text(androidx.compose.ui.res.stringResource(R.string.difficulty_range)) }, 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), 
                     modifier = Modifier.fillMaxWidth()
                 )
                 
                 HorizontalDivider()
-                Text("Risposte (Scegli la corretta):", style = MaterialTheme.typography.titleSmall)
+                Text(androidx.compose.ui.res.stringResource(R.string.answers_selection), style = MaterialTheme.typography.titleSmall)
                 
                 Column(Modifier.selectableGroup()) {
                     answers.forEachIndexed { index, ans ->
@@ -483,7 +484,7 @@ fun EditQuestionDialog(
                                     newList[index] = it
                                     answers = newList.toList()
                                 },
-                                label = { Text("Risposta ${index + 1}") },
+                                label = { Text(androidx.compose.ui.res.stringResource(R.string.answer_index, index + 1)) },
                                 modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 isError = ans.isBlank()
                             )
@@ -492,13 +493,17 @@ fun EditQuestionDialog(
                 }
                 
                 if (selectedCorrectIndex == -1) {
-                    Text("Seleziona una risposta corretta!", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+                    Text(androidx.compose.ui.res.stringResource(R.string.select_correct_error), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+                }
+
+                if (hasDuplicateAnswers) {
+                    Text(androidx.compose.ui.res.stringResource(R.string.duplicate_answers_error), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
                 }
                 
                 HorizontalDivider()
                 
-                OutlinedTextField(value = explanation, onValueChange = { explanation = it }, label = { Text("Spiegazione") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = source, onValueChange = { source = it }, label = { Text("Fonte") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = explanation, onValueChange = { explanation = it }, label = { Text(androidx.compose.ui.res.stringResource(R.string.explanation)) }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = source, onValueChange = { source = it }, label = { Text(androidx.compose.ui.res.stringResource(R.string.source)) }, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = {
@@ -518,10 +523,10 @@ fun EditQuestionDialog(
                     }
                 },
                 enabled = isFormValid
-            ) { Text("Salva") }
+            ) { Text(androidx.compose.ui.res.stringResource(R.string.save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annulla") }
+            TextButton(onClick = onDismiss) { Text(androidx.compose.ui.res.stringResource(R.string.cancel)) }
         }
     )
 }

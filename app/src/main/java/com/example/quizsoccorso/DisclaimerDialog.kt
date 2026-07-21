@@ -46,7 +46,7 @@ fun DisclaimerDialog(
                     .padding(24.dp)
             ) {
                 Text(
-                    text = "Disclaimer Legale",
+                    text = androidx.compose.ui.res.stringResource(R.string.disclaimer_title_full),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.fillMaxWidth(),
@@ -61,23 +61,7 @@ fun DisclaimerDialog(
                         .verticalScroll(rememberScrollState())
                 ) {
                     MarkdownText(
-                        text = """
-                            # Disclaimer
-
-                            La presente applicazione è stata sviluppata esclusivamente come **strumento di supporto allo studio e al ripasso personale**. Non costituisce in alcun modo un programma didattico ufficiale, né sostituisce la formazione teorica e pratica prevista dai corsi per soccorritori.
-
-                            I contenuti dell'app sono forniti a solo scopo educativo e potrebbero contenere errori, omissioni o informazioni non aggiornate. Pur essendo stata prestata la massima attenzione nella loro preparazione, **non è possibile garantirne la completezza, l'accuratezza o la conformità alle più recenti linee guida e procedure operative**.
-
-                            L'utilizzo dell'app **non costituisce consulenza medica, sanitaria o professionale** e non deve essere impiegato per assumere decisioni cliniche, assistenziali o operative durante interventi di soccorso.
-
-                            Le indicazioni fornite da **istruttori, formatori, responsabili della formazione, protocolli ufficiali, linee guida vigenti e documentazione dell'ente di appartenenza prevalgono sempre** sui contenuti presenti nell'applicazione.
-
-                            L'autore non è affiliato, autorizzato o rappresenta alcun ente di formazione, organizzazione di soccorso o istituzione sanitaria, salvo diversa ed esplicita indicazione.
-
-                            L'utente è l'unico responsabile della verifica delle informazioni e del proprio percorso formativo. L'utilizzo dell'app implica l'accettazione che essa rappresenta esclusivamente un **coadiuvante allo studio**, senza alcuna garanzia di superamento dell'esame o di idoneità professionale.
-
-                            L'autore declina ogni responsabilità per eventuali danni, diretti o indiretti, derivanti dall'utilizzo dell'applicazione o dall'affidamento ai suoi contenuti.
-                        """.trimIndent()
+                        text = androidx.compose.ui.res.stringResource(R.string.disclaimer_content)
                     )
                 }
 
@@ -88,14 +72,14 @@ fun DisclaimerDialog(
                         onClick = onAccept,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Ho letto e accetto le condizioni")
+                        Text(androidx.compose.ui.res.stringResource(R.string.disclaimer_accept))
                     }
                 } else {
                     Button(
                         onClick = onDismiss,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Chiudi")
+                        Text(androidx.compose.ui.res.stringResource(R.string.close))
                     }
                 }
             }
